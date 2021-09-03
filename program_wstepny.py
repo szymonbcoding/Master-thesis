@@ -3,9 +3,6 @@ import PIL
 from openpyxl import load_workbook
 import math
 
-def convertMmToPx(val, mm, px):
-    return math.ceil(val*px/mm)
-
 crop_list = []
 save_list = []
 labels = []
