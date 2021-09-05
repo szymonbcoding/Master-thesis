@@ -1,2 +1,2 @@
 # Master-thesis
-#This is my master-thesis project.
+#This is my master-thesis project
