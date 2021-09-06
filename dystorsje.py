@@ -1,37 +1,22 @@
-#otrzymany wycinek kroimy na cztery inne:
-#1 - horizontal up
-#2 - horizontal down
-#3 - vetical left
-#4 - vertical right
-
-#Na przykładzie 1:
-
-#bierzemy piksel z pierwszego rzędu 
-#i kolumnie o nr równym połowie max liczbie kolumn
-#idziemy w dół aż znjadziemy ostatni piksel ciemny
-#liczymy odległość do kolejnego ciemnego piksela 
-#tym razem uwzględniając cały wycinek, nie tylko horizontal up
-
-#gdy już znajdziemy drugi ciemny piksel, obliczamy odległość 
-#całość powtarzamy idąc o jeden piksel w lewo i w prawo, 
-#aż trafimy na jasny piksel
-
-#jesli idąc w dół od ciemnego piksela nie znajdziemy drugiego,
-#to tej kolumny nie uwzględniamy
-
-#liczymy średnią długość i odchylenie standardowe
-
-#analogicznie dla prostokątów lewo prawo
-
-#proces odbywa się dla 4 obszarów w różnych miejscach planszy
-
 from PIL import Image, ImageOps
 import PIL
 import math
+from openpyxl import load_workbook
 
-def calc_avr(dist_list):
+def find_empty_row(sh) -> int:
+    
+    r = 0
+    
+    for i in range(4, 1000):
+        if(not (sh.cell(row = i, column = 1).value)):
+            r = i
+            break
+    return r
+
+def calc_avr(dist_list) -> float:
     
     return sum(dist_list)/len(dist_list)
+    
 
 def calc_dev(dist_list, avr):
 
@@ -74,14 +59,14 @@ def dystorsja(dist_list):
             #dystorsja beczkowa
             return -1
 
-def main():
-
+def processing(n: int):
+    
     v_dist_left = []
     v_dist_right = []
     h_dist_up = []
     h_dist_down = []
 
-    im = Image.open('cropped_images/D2.JPG')
+    im = Image.open('cropped_images/D' + str(n + 1) + '.JPG')
     mono = ImageOps.grayscale(im)
     x, y = mono.size
     
@@ -184,25 +169,71 @@ def main():
     #print("v_dist_left", v_dist_left)
     #print("v_dist_right", v_dist_right)
 
-    d1 = dystorsja(h_dist_up)
-    d2 = dystorsja(h_dist_down)
-    d3 = dystorsja(v_dist_left)
-    d4 = dystorsja(v_dist_right)  
+    if(h_dist_down and h_dist_up and v_dist_left and v_dist_right):
+    
+        d1 = dystorsja(h_dist_up)
+        d2 = dystorsja(h_dist_down)
+        d3 = dystorsja(v_dist_left)
+        d4 = dystorsja(v_dist_right)  
 
-    print(d1, d2, d3, d4)
+        print(d1, d2, d3, d4)
 
-    if(d1 == 0 and d2 == 0 and d3 == 0 and d4 == 0):
-        #brak dystorsji
-        print("Brak dystorsji")
-    elif(d1 == 1 and d2 == 1 and d3 == 1 and d4 == 1):
-        #dystorsja poduszkowa
-        print("Dystorsja poduszkowa")
-    elif(d1 == -1 and d2 == -1 and d3 == -1 and d4 == -1):
-        #dystorsja beczkowa
-        print("Dystorsja beczkowa")
+        h_list = h_dist_up + h_dist_down
+        v_list = v_dist_left + v_dist_right
+        
+        ha = calc_avr(h_list)
+        hd = calc_dev(h_list, ha)
+        hpd = calc_perc_dev(hd, ha)
+        
+        va = calc_avr(v_list)
+        vd = calc_dev(v_list, va)
+        vpd = calc_perc_dev(vd, va)
+        
+    
+        
+        message = ""
+        
+        if(d1 == 0 and d2 == 0 and d3 == 0 and d4 == 0):
+            #brak dystorsji
+            message = "Brak dystorsji"
+        elif(d1 == 1 and d2 == 1 and d3 == 1 and d4 == 1):
+            #dystorsja poduszkowa
+            message = "Dystorsja poduszkowa"
+        elif(d1 == -1 and d2 == -1 and d3 == -1 and d4 == -1):
+            #dystorsja beczkowa
+            message = "Dystorsja beczkowa"
+        else:
+            #błąd
+            message = "Błąd"
+            
+        output = [hpd, vpd, message]
     else:
-        #błąd
-        print("Błąd")
+        output = [None, None, None]
+           
+    return output
+        
+def main():
+    
+    wb = load_workbook(filename = 'output.xlsx')
+    sheet = wb['4_Dystorsje']
+    
+    empty_row = find_empty_row(sheet)
+    
+    
+    
+    for i in range(0, 4):
+        if(processing(i)[0]):
+            #hpd
+            sheet.cell(row = empty_row, column = (3 * i + 1)).value = round(processing(i)[0], 3)
+            #vpd
+            sheet.cell(row = empty_row, column = (3 * i + 2)).value = round(processing(i)[1], 3)
+            #werdykt
+            sheet.cell(row = empty_row, column = (3 * i + 3)).value = processing(i)[2]
+        else:
+            for j in range(1, 4):
+                sheet.cell(row = empty_row, column = (3 * i + j)).value = "Blad"
+                
+    wb.save('output.xlsx')
 
 if __name__ == "__main__":
     main()

@@ -1,16 +1,27 @@
 from PIL import Image
 import PIL
 import math
+from openpyxl import load_workbook
 
-#jeśli żadna ze składowych nie różni się od średniej
-#o więcej niż 30 to zwróć False
-#inaczej zwróć True
-
-#DO ZMIANY, JEŚLI ARKUSZ SIĘ ZMIENI
+#DO ZMIANY, JEŚLI ARKUSZ WYCINANIA SIĘ ZMIENI
 x_mm = 198
 y_mm = 38
 
 square_side_mm = 20
+
+def find_empty_row(sh) -> int:
+    
+    r = 0
+    
+    for i in range(4, 1000):
+        if(not (sh.cell(row = i, column = 1).value)):
+            r = i
+            break
+    return r
+
+#jeśli żadna ze składowych nie różni się od średniej
+#o więcej niż 30 to zwróć False
+#inaczej zwróć True
 
 #sprawdzanie czy w danym wierszu
 #ponad połowa pikseli różni się od wzorca
@@ -66,13 +77,16 @@ def calc_percent_deviation(dev_list: list, avr_list: list) -> list:
 #def main(photo: PIL.Image.Image, mode: int) -> list:
 def main():
 
+    wb = load_workbook(filename = 'output.xlsx')
+    sheet = wb['7_Szum_RGB']
+    
+    empty_row = find_empty_row(sheet)
+    
     #wstaw ścieżkę do zdjęcia
     im = Image.open("cropped_images/CD1.JPG")
     x,y = im.size
 
     square_side_px = math.floor(x * square_side_mm / x_mm)
-
-    print("square_px:", square_side_px)
 
     px = im.convert("RGB")
 
@@ -117,30 +131,30 @@ def main():
         cropped_images.append(px.crop((crop_coords[i][0], crop_coords[i][1], crop_coords[i][2], crop_coords[i][3])))
         #cropped_images[i].save('kolor/' + str(i) + '.JPG')
 
-    labels = ["red", "yellow", "dark green", "light blue", "dark blue", "pink", "purple", "salmon", "light green"]
+    #labels = ["red", "yellow", "dark green", "light blue", "dark blue", "pink", "purple", "salmon", "light green"]
 
     for i in range(9):
 
-        print(labels[i])
-        print("")
+        #print(labels[i])
+        #print("")
 
         a_list = calc_avr(cropped_images[i])
         d_list = calc_deviation(cropped_images[i], a_list)
         pd_list = calc_percent_deviation(d_list, a_list)
 
-        print("Average:")
-        print("R:", a_list[0], "G:", a_list[1], "B:", a_list[2])
-
-        print("Deviation:")
-        print("R:", d_list[0], "G:", d_list[1], "B:", d_list[2])
-
-        print("Percent deviation:")
-        print("R:", pd_list[0], "G:", pd_list[1], "B:", pd_list[2])
-
-        print("")
+        #Avr loop
+        for j in range(3):
+            sheet.cell(row = empty_row, column = i*9 + 1 + j * 3).value = round(a_list[j], 2)
+            
+        #Dev loop  
+        for j in range(3):
+            sheet.cell(row = empty_row, column = i*9 + 2 + j * 3).value = round(d_list[j], 2)
         
+        #Pdev loop [%]
+        for j in range(3):
+            sheet.cell(row = empty_row, column = i*9 + 3 + j * 3).value = round(pd_list[j], 2)
 
-
+    wb.save('output.xlsx')
 
 if __name__ == "__main__":
     #main(photo, mode)

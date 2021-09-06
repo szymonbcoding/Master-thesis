@@ -1,10 +1,21 @@
 from PIL import Image
 import PIL
 import math
+from openpyxl import load_workbook
 
 #DO ZMIANY, JEŚLI ARKUSZ SIĘ ZMIENI
 x_mm = 118
 y_mm = 58
+
+def find_empty_row(sh) -> int:
+    
+    r = 0
+    
+    for i in range(4, 1000):
+        if(not (sh.cell(row = i, column = 1).value)):
+            r = i
+            break
+    return r
 
 square_side_mm = 20
 
@@ -32,6 +43,11 @@ def calc_avr(photo: PIL.Image.Image) -> float:
 #def main(photo: PIL.Image.Image, mode: int) -> list:
 def main():
 
+    wb = load_workbook(filename = 'output.xlsx')
+    sheet = wb['8_Rozroznialnosc']
+    
+    empty_row = find_empty_row(sheet)
+    
     #wstaw ścieżkę do zdjęcia
     im = Image.open("cropped_images/CD2.JPG")
     x,y = im.size
@@ -85,19 +101,55 @@ def main():
         cropped_images.append(px.crop((crop_coords[i][0], crop_coords[i][1], crop_coords[i][2], crop_coords[i][3])))
         #cropped_images[i].save('bw/' + str(i) + '.JPG')
 
-    labels = ["black", "white"]
+    good = 4
+    notbad = 1
+    
+    werdykt_b = -1
 
-    for i in range(10):
-
-        if(i < 5):
-            print("Black" + str(i))
-        elif(i >= 5):
-            print("White" + str(i - 5))
+    #czarne
+    for i in range(5):
 
         a = calc_avr(cropped_images[i])
+        
+        if(i>0):
+            if(a - good > calc_avr(cropped_images[i - 1])):
+                werdykt_b += 3
+            elif(a - notbad > calc_avr(cropped_images[i - 1])):
+                werdykt_b += 1
+            
+        sheet.cell(row = empty_row, column = i + 1).value = round(a, 2)
+    
+    if(werdykt_b >= 12):
+        sheet.cell(row = empty_row, column = 6).value = "Zadowalająca rozróżnialność"
+    elif(werdykt_b >= 4):
+        sheet.cell(row = empty_row, column = 6).value = "Dopuszczająca rozróżnialność"
+    else:
+        sheet.cell(row = empty_row, column = 6).value = "Niedostateczna rozróżnialność"
+    
+    werdykt_w = -1
+    
+    #biale
+    for i in range(5):
+        
+        a = calc_avr(cropped_images[i + 5])
 
-        print("Average:", a)
-        print("")
+        if(i>0):
+            if(a - good > calc_avr(cropped_images[i + 4])):
+                werdykt_w += 3
+            elif(a - notbad > calc_avr(cropped_images[i + 4])):
+                werdykt_w += 1
+        
+        sheet.cell(row = empty_row, column = i + 7).value = round(a, 2)
+    
+    if(werdykt_w >= 9):
+        sheet.cell(row = empty_row, column = 12).value = "Zadowalająca rozróżnialność"
+    elif(werdykt_w >= 3):
+        sheet.cell(row = empty_row, column = 12).value = "Dopuszczająca rozróżnialność"
+    else:
+        sheet.cell(row = empty_row, column = 12).value = "Niedostateczna rozróżnialność"
+    
+    
+    wb.save('output.xlsx')
 
 if __name__ == "__main__":
     main()

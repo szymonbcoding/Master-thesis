@@ -25,10 +25,10 @@ def correct_frame(photos):
         for i in range(w):
             for j in range(h):
                 v = photo.getpixel((i, j))
-                if(is_black(v) or is_red(v)):
+                if(is_red(v)):
                     counter += 1
     
-    if(counter>=20):
+    if(counter>=0):
         return True
     else:
         return False

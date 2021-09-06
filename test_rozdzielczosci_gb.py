@@ -2,8 +2,24 @@ from PIL import Image
 import PIL
 import math
 
+from openpyxl import load_workbook
+
+def find_empty_row(sh) -> int:
+    
+    r = 0
+    
+    for i in range(4, 1000):
+        if(not (sh.cell(row = i, column = 1).value)):
+            r = i
+            break
+    return r
 
 def main():
+    
+    wb = load_workbook(filename = 'output.xlsx')
+    sheet = wb['2c_GB_RT']
+    
+    empty_row = find_empty_row(sheet)
     
     #maksymalna wysokosc testu rozdzielczosci[mm]
     MAX = 20
@@ -73,12 +89,15 @@ def main():
     #2 - (1.8 * 0) = 2 (najgorszy wynik)
     #2 - (1.8 * 1) = 0.2 (najlepszy wynik)
     h_mm_resolution = 2 - (1.8 * p_row_found)
-
+    sheet.cell(row = empty_row, column = 1).value = round(h_mm_resolution, 3)
+    
     real_h_px_resolution = math.floor(w/h_mm_resolution)
 
     print("Rzeczywista pozioma rozdzielczosc: " + str(real_h_px_resolution))
+    sheet.cell(row = empty_row, column = 2).value = real_h_px_resolution
     print("Maksymalna mozliwa pozioma rozdzielczosc " + str(math.floor(w/0.2)))
-
+    sheet.cell(row = empty_row, column = 3).value = math.floor(w/0.2)
+    
     #PETLA TESTU ROZDZIELCZOSCI PIONOWEJ
 
     ver_res = 0
@@ -111,13 +130,17 @@ def main():
     #2 - (1.8 * 0) = 2 (najgorszy wynik)
     #2 - (1.8 * 1) = 0.2 (najlepszy wynik)
     v_mm_resolution = 2 - (1.8 * p_col_found)
-
+    sheet.cell(row = empty_row, column = 4).value = round(v_mm_resolution, 3)
+    
     real_v_px_resolution = math.floor(h/v_mm_resolution)
-
+    sheet.cell(row = empty_row, column = 5).value = real_v_px_resolution
+    
     print("Rzeczywista pionowa rozdzielczosc: " + str(real_v_px_resolution))
     print("Najwyzsza mozliwa pionowa rozdzielczosc " + str(math.floor(h/0.2)))
+    sheet.cell(row = empty_row, column = 6).value = math.floor(h/0.2)
 
-
+    wb.save('output.xlsx')
+    
 if __name__ == "__main__":
     main()
             

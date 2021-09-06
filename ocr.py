@@ -1,5 +1,16 @@
 import cv2 
 import pytesseract
+from openpyxl import load_workbook
+
+def find_empty_row(sh) -> int:
+    
+    r = 0
+    
+    for i in range(4, 1000):
+        if(not (sh.cell(row = i, column = 1).value)):
+            r = i
+            break
+    return r
 
 def getFontSize(line: str) -> str:
 
@@ -8,32 +19,30 @@ def getFontSize(line: str) -> str:
     else:
         return line[:3]
 
-def main():
+def recognition(n: int) -> float:
     
     tekst = " Praca magisterska rnGC6mmmm"
     OCR1_nr_list = ["6.5", "6", "5.5", "5", "4.5", "4", "3.5", "3"]
     OCR2_nr_list = ["2.7", "2.4", "2.1", "1.8", "1.5", "1.2", "1", "0.8", "0.6"]
 
-    result = -1
     #mode = "OCR1"
-    mode = "OCR2"
 
-    img = cv2.imread("cropped_images/" + mode + ".JPG")
+    img = cv2.imread("cropped_images/OCR" + str(n) + ".JPG")
 
     # Adding custom options
     custom_config = r'--oem 3 --psm 6'
     #print(pytesseract.image_to_string(img, config=custom_config))
 
-    f = open("ocr_txt_files/" + mode +"_temp.txt", "w")
+    f = open("OCR" + str(n) +"_temp.txt", "w")
 
     f.write(pytesseract.image_to_string(img, config=custom_config))
 
     f.close()
 
     i=0
-    label = eval(mode + "_nr_list")
+    label = eval("OCR" + str(n) + "_nr_list")
 
-    with open('ocr_txt_files/' + mode + '_temp.txt','r') as file: 
+    with open('OCR' + str(n) + '_temp.txt','r') as file: 
         for line in file:
             if(line[0].isnumeric()):
                 #printlabel[i] + tekst)
@@ -49,10 +58,31 @@ def main():
                     i -= 1
                     break
     if(i<0):
-        print("Nic nie rozpoznało")
+        return 9
     else:
-        print("result:", getFontSize(label[i] + tekst))
+        return label[i]
 
+def main():
+    
+    wb = load_workbook(filename = 'output.xlsx')
+    sheet = wb['5_OCR']
+    
+    empty_row = find_empty_row(sheet)
+    
+    min = 10
+    
+    for i in range(1,3):
+        temp = float(recognition(i))
+        if(temp < min):
+            min = temp
+    
+    if(min == 9):
+        sheet.cell(row = empty_row, column = 1).value = "Nic nie rozpoznano"
+    else:
+        sheet.cell(row = empty_row, column = 1).value = min
+
+    wb.save('output.xlsx')
+    
 if __name__ == "__main__":
     main()
 
