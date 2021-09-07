@@ -10,24 +10,48 @@ h = 366.67
 im = Image.open('photo/test.JPG')
 x, y = im.size
 
+wb = load_workbook(filename = 'coordinates_v2.xlsx')
+
 if(0.63 < y/x < 0.705):
     mode = 23
     w = w23
+    sheet = wb['23']
 elif(0.705 <= y/x < 0.79):
     mode = 34
     w = w34
+    sheet = wb['34']
+    
 else:
     print("Nieobslugiwana proporcja obrazu.")
 
-left = 517
-top = 308.67
-right = 542
-down = 355.17
+label = "RG_RT"
 
-label = "BW_RT4"
+pointer = -1
 
-im.crop((left * x/w, top * y/h, right * x/w, down * y/h)).save('cropped_images/' + label + '.JPG')
+for i in range(2, 19):
+    if(label in sheet.cell(row = i, column = 1).value):
+        pointer = i
 
+
+if(pointer > 1):
+
+    left = round(sheet.cell(row = pointer, column = 2).value, 4)
+    top = round(sheet.cell(row = pointer, column = 3).value, 4)
+    right = round(sheet.cell(row = pointer, column = 4).value, 4)
+    down = round(sheet.cell(row = pointer, column = 5).value, 4)
+    
+    
+    dleft = 1.5
+    dtop = -1
+    
+    dright = dleft
+    ddown = dtop
+
+
+
+    im.crop(((left + dleft) * x/w, (top + dtop) * y/h, (right + dright) * x/w, (down + ddown) * y/h)).save('cropped_images/' + label + '.JPG')
+else:
+    print("Blad")
 
 
 

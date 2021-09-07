@@ -3,8 +3,6 @@ import PIL
 from openpyxl import load_workbook
 import math
 
-from openpyxl.cell.cell import KNOWN_TYPES
-
 import kontrola_kadrowania
 
 crop_list = []
@@ -20,7 +18,8 @@ y_crop_difference = 51.5
 
 def main():
     if(kontrola_kadrowania.main()):
-        im = Image.open('photo/test.jpg')
+        
+        im = Image.open('photo/*.jpg')
         x, y = im.size
 
         if(0.63 < y/x < 0.705):

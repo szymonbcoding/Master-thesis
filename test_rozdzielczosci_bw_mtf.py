@@ -21,10 +21,11 @@ def contrast(vmax: int, vmin: int) -> float:
 def mtf(cf: float, c0: float) -> float:
     return (100 * cf/c0)
 
-def main():
+def rt(n: int):
     
     wb = load_workbook(filename = 'output.xlsx')
-    sheet = wb['2a_BW_RT']
+    
+    sheet = wb['2a_BW_RT' + str(n)]
     
     empty_row = find_empty_row(sheet)
     
@@ -49,7 +50,7 @@ def main():
     px_20mm = math.ceil(y_all * MAX/h)
 
     #zaladowanie obrazu w wersji monochromatycznej
-    im2 = Image.open('cropped_images/BW_RT5.JPG').convert("L")
+    im2 = Image.open('cropped_images/BW_RT' + str(n) + '.JPG').convert("L")
 
     #rozdzielczosc wycinka
     x, y = im2.size
@@ -128,20 +129,27 @@ def main():
     h_vb_f = 256
 
     length_last_row_px = 10 * h_mm_resolution * x_all / w
-    #print("length_last_row_px:", length_last_row_px)
-    if(not h_mtf_pointer == -1):
-        for i in range(h_pointer, math.floor(h_pointer + 0.8 *length_last_row_px)):
-            #print(im2.getpixel((i, h_mtf_pointer)))
-            #print(im2.getpixel((i, v_pointer - px_20mm)))
-            if(im2.getpixel((i, h_mtf_pointer)) > h_vw_f):
-                h_vw_f = im2.getpixel((i, h_mtf_pointer))
-            elif(im2.getpixel((i, h_mtf_pointer)) < h_vb_f):
-                h_vb_f = im2.getpixel((i, h_mtf_pointer))
+    
+    if(h_pointer + 0.8 *length_last_row_px < x):
+        #print("length_last_row_px:", length_last_row_px)
+        if(not h_mtf_pointer == -1):
+            print("length_last_row_px:", length_last_row_px)
+            print("h_pointer:", h_pointer, "h_mtf_pointer:", h_mtf_pointer)
+            for i in range(h_pointer, math.floor(h_pointer + 0.8 *length_last_row_px)):
+                #print(im2.getpixel((i, h_mtf_pointer)))
+                #print(im2.getpixel((i, v_pointer - px_20mm)))
+                if(im2.getpixel((i, h_mtf_pointer)) > h_vw_f):
+                    h_vw_f = im2.getpixel((i, h_mtf_pointer))
+                elif(im2.getpixel((i, h_mtf_pointer)) < h_vb_f):
+                    h_vb_f = im2.getpixel((i, h_mtf_pointer))
 
-        h_mtf_result = mtf(contrast(h_vw_f, h_vb_f), contrast(vw_0, vb_0))
-        print("vw_0:", vw_0, "vb_0:", vb_0, "h_vw_f:", h_vw_f, "h_vb_f:", h_vb_f)
-        print("h_mtf_result:", h_mtf_result)
-        sheet.cell(row = empty_row, column = 4).value = round(h_mtf_result, 2)
+            h_mtf_result = mtf(contrast(h_vw_f, h_vb_f), contrast(vw_0, vb_0))
+            print("vw_0:", vw_0, "vb_0:", vb_0, "h_vw_f:", h_vw_f, "h_vb_f:", h_vb_f)
+            print("h_mtf_result:", h_mtf_result)
+            sheet.cell(row = empty_row, column = 4).value = round(h_mtf_result, 2)
+        
+        else:
+            sheet.cell(row = empty_row, column = 4).value = "Blad"
     else:
         sheet.cell(row = empty_row, column = 4).value = "Blad"
     #PETLA TESTU ROZDZIELCZOSCI PIONOWEJ
@@ -203,23 +211,32 @@ def main():
 
     length_last_col_px = 10 * v_mm_resolution * y_all / h
     #print("length_last_col_px:", length_last_col_px)
-    if(not h_pointer == -1):
-        for j in range(math.floor(v_mtf_pointer - 0.8 * length_last_col_px), v_mtf_pointer):
-            #print(im2.getpixel((h_pointer, j)))
-            if(im2.getpixel((h_pointer, j)) > v_vw_f):
-                v_vw_f = im2.getpixel((h_pointer, j))
-            elif(im2.getpixel((h_pointer, j)) < v_vb_f):
-                v_vb_f = im2.getpixel((h_pointer, j))
+    if(v_pointer + 0.8 *length_last_row_px < y):
+        if(not h_pointer == -1):
+            for j in range(math.floor(v_mtf_pointer - 0.8 * length_last_col_px), v_mtf_pointer):
+                #print(im2.getpixel((h_pointer, j)))
+                if(im2.getpixel((h_pointer, j)) > v_vw_f):
+                    v_vw_f = im2.getpixel((h_pointer, j))
+                elif(im2.getpixel((h_pointer, j)) < v_vb_f):
+                    v_vb_f = im2.getpixel((h_pointer, j))
 
-        v_mtf_result = mtf(contrast(v_vw_f, v_vb_f), contrast(vw_0, vb_0))
-        print("vw_0:", vw_0, "vb_0:", vb_0, "v_vw_f:", v_vw_f, "v_vb_f:", v_vb_f)
-        print("v_mtf_result:", v_mtf_result)
-        sheet.cell(row = empty_row, column = 8).value = round(v_mtf_result, 2)
+            v_mtf_result = mtf(contrast(v_vw_f, v_vb_f), contrast(vw_0, vb_0))
+            print("vw_0:", vw_0, "vb_0:", vb_0, "v_vw_f:", v_vw_f, "v_vb_f:", v_vb_f)
+            print("v_mtf_result:", v_mtf_result)
+            sheet.cell(row = empty_row, column = 8).value = round(v_mtf_result, 2)
+        else:
+            sheet.cell(row = empty_row, column = 8).value = "Blad"
     else:
         sheet.cell(row = empty_row, column = 8).value = "Blad"
     
-    wb.save('output.xlsx')
+    wb.save('output.xlsx')  
+
+def main():
     
+    for n in range(1,6):
+        rt(n)
+    
+  
 if __name__ == "__main__":
     main()
             

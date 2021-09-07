@@ -193,6 +193,26 @@ def processing(n: int):
         
         message = ""
         
+        d = d1 + d2 + d3 + d4
+        
+        if(-1 <= d <= 1):
+            #brak dystorsji
+            message = "Brak dystorsji"
+        elif(d >= 3):
+            #dystorsja poduszkowa
+            message = "Dystorsja poduszkowa"
+        elif(d == 2): 
+            message = "Przypuszczalna dystorsja poduszkowa"
+        elif(d <= -3):
+            #dystorsja beczkowa
+            message = "Dystorsja beczkowa"
+        elif(d == -2):
+            message = "Przypuszczalna dystorsja beczkowa"
+        else:
+            #błąd
+            message = "Błąd"
+        
+        """
         if(d1 == 0 and d2 == 0 and d3 == 0 and d4 == 0):
             #brak dystorsji
             message = "Brak dystorsji"
@@ -205,7 +225,7 @@ def processing(n: int):
         else:
             #błąd
             message = "Błąd"
-            
+        """ 
         output = [hpd, vpd, message]
     else:
         output = [None, None, None]

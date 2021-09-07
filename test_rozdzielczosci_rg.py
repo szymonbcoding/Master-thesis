@@ -14,6 +14,16 @@ def find_empty_row(sh) -> int:
             break
     return r
 
+def find_max_index(t: tuple) -> int:
+    max = -1
+    max_index = -1
+    for idx, val in enumerate(t):
+        if(val>max):
+            max = val
+            max_index = idx
+            
+    return max_index
+
 def main():
     
     wb = load_workbook(filename = 'output.xlsx')
@@ -48,9 +58,9 @@ def main():
     #rozdzielczosc wycinka
     x, y = im2.size
 
-    print("Green:", im2.getpixel((25, 27)))
+    #print("Green:", im2.getpixel((25, 27)))
     
-    print("Red:", im2.getpixel((42, 35)))
+    #print("Red:", im2.getpixel((42, 35)))
 
     #PETLA TESTU ROZDZIELCZOSCI POZIOMEJ
 
@@ -65,11 +75,13 @@ def main():
 
         for j in range (0, x):
 
-            if((im2.getpixel((j,i))[1] >= 90) and (im2.getpixel((j,i))[0] <= 90) and not hor_flag):
+            k = im2.getpixel((j,i))
+            
+            if((k[1] >= 100) and find_max_index(k) == 1 and not hor_flag):
 
                 hor_flag = True
             
-            elif((im2.getpixel((j,i))[0] >= 90) and (im2.getpixel((j,i))[1] <= 90) and hor_flag):
+            elif((k[0] >= 100) and find_max_index(k) == 0 and hor_flag):
                 
                 hor_flag = False
                 hor_edges += 1
@@ -109,11 +121,13 @@ def main():
 
         for j in range (v_pointer, y):
 
-            if((im2.getpixel((i,j))[0] >= 90) and (im2.getpixel((i,j))[1] <= 90) and not ver_flag):
+            k = im2.getpixel((i,j))
+            
+            if((k[0] >= 100) and find_max_index(k) == 0 and not ver_flag):
 
                 ver_flag = True
             
-            elif((im2.getpixel((i,j))[1] >= 90) and (im2.getpixel((i,j))[0] <= 90) and ver_flag):
+            elif((k[1] >= 100) and find_max_index(k) == 1 and ver_flag):
                 
                 ver_flag = False
                 ver_edges += 1
