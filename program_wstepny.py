@@ -3,7 +3,16 @@ import PIL
 from openpyxl import load_workbook
 import math
 
+
 import kontrola_kadrowania
+
+import glob
+
+def openFolder(path):
+    for filename in glob.glob(path + '/*.JPG'):
+        img=Image.open(filename)
+
+    return img
 
 crop_list = []
 save_list = []
@@ -19,7 +28,7 @@ y_crop_difference = 51.5
 def main():
     if(kontrola_kadrowania.main()):
         
-        im = Image.open('photo/*.jpg')
+        im = openFolder("photo")
         x, y = im.size
 
         if(0.63 < y/x < 0.705):

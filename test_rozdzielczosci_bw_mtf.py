@@ -4,6 +4,14 @@ import math
 
 from openpyxl import load_workbook
 
+import glob
+
+def openFolder(path):
+    for filename in glob.glob(path + '/*.JPG'):
+        img=Image.open(filename)
+
+    return img
+
 def find_empty_row(sh) -> int:
     
     r = 0
@@ -26,6 +34,7 @@ def rt(n: int):
     wb = load_workbook(filename = 'output.xlsx')
     
     sheet = wb['2a_BW_RT' + str(n)]
+    print("Processing: BW_RT", str(n))
     
     empty_row = find_empty_row(sheet)
     
@@ -35,7 +44,7 @@ def rt(n: int):
     h = 366.67
 
     #zaladowanie całego obrazu planszy
-    im1 = Image.open('photo/test.jpg')
+    im1 = openFolder("photo")
 
     x_all, y_all = im1.size
 
@@ -89,20 +98,24 @@ def rt(n: int):
 
                 hor_flag = False
                 hor_edges += 1
-
-                if(v_pointer == -1):
-                    
+                
+                if(h_pointer == -1 and v_pointer != -1):
                     h_pointer = j
-                    v_pointer = i + px_20mm
+
+                
                     
             #sprawdzanie czy program naliczyl 5 zbocz 
             if(hor_edges>=5):
-                    
+                
+                if(v_pointer == -1):
+                
+                    v_pointer = i + px_20mm
+                
                 hor_res += 1
                 h_mtf_pointer = i
                 break
 
-    print("hor_res: " + str(hor_res))
+    #print("hor_res: " + str(hor_res))
     #stosunek poprawnych wierszy (najlepszy mozliwy wynik = 1, najgorszy mozliwy wynik = 0)
     p_row_found = hor_res/px_20mm
     
@@ -110,15 +123,15 @@ def rt(n: int):
     #2 - (1.8 * 0) = 2 (najgorszy wynik)
     #2 - (1.8 * 1) = 0.2 (najlepszy wynik)
     h_mm_resolution = 2 - (1.8 * p_row_found)
-    print("h_mm_resolution:", h_mm_resolution)
+    #print("h_mm_resolution:", h_mm_resolution)
     sheet.cell(row = empty_row, column = 1).value = round(h_mm_resolution, 3)
     
     real_h_px_resolution = math.floor(w/h_mm_resolution)
 
-    print("Rzeczywista pozioma rozdzielczosc: " + str(real_h_px_resolution))
+    #print("Rzeczywista pozioma rozdzielczosc: " + str(real_h_px_resolution))
     sheet.cell(row = empty_row, column = 2).value = real_h_px_resolution
     
-    print("Maksymalna mozliwa pozioma rozdzielczosc " + str(math.floor(w/0.2)))
+    #print("Maksymalna mozliwa pozioma rozdzielczosc " + str(math.floor(w/0.2)))
     sheet.cell(row = empty_row, column = 3).value = math.floor(w/0.2)
     
     #MTF
@@ -130,22 +143,26 @@ def rt(n: int):
 
     length_last_row_px = 10 * h_mm_resolution * x_all / w
     
-    if(h_pointer + 0.8 *length_last_row_px < x):
+    if(h_pointer + length_last_row_px < x):
+        #print("h_pointer (i):", h_pointer)
+        #print("h_mtf_pointer (j):", h_mtf_pointer)
         #print("length_last_row_px:", length_last_row_px)
         if(not h_mtf_pointer == -1):
-            print("length_last_row_px:", length_last_row_px)
-            print("h_pointer:", h_pointer, "h_mtf_pointer:", h_mtf_pointer)
-            for i in range(h_pointer, math.floor(h_pointer + 0.8 *length_last_row_px)):
+            #print("length_last_row_px:", length_last_row_px)
+            #print("h_pointer:", h_pointer, "h_mtf_pointer:", h_mtf_pointer)
+            for i in range(h_pointer, math.floor(h_pointer + length_last_row_px)):
                 #print(im2.getpixel((i, h_mtf_pointer)))
                 #print(im2.getpixel((i, v_pointer - px_20mm)))
+                #print(im2.getpixel((i, h_mtf_pointer)))
                 if(im2.getpixel((i, h_mtf_pointer)) > h_vw_f):
                     h_vw_f = im2.getpixel((i, h_mtf_pointer))
                 elif(im2.getpixel((i, h_mtf_pointer)) < h_vb_f):
                     h_vb_f = im2.getpixel((i, h_mtf_pointer))
 
             h_mtf_result = mtf(contrast(h_vw_f, h_vb_f), contrast(vw_0, vb_0))
-            print("vw_0:", vw_0, "vb_0:", vb_0, "h_vw_f:", h_vw_f, "h_vb_f:", h_vb_f)
-            print("h_mtf_result:", h_mtf_result)
+            #print("vw_0:", vw_0, "vb_0:", vb_0, "h_vw_f:", h_vw_f, "h_vb_f:", h_vb_f)
+            #print("h_mtf_result:", h_mtf_result)
+            
             sheet.cell(row = empty_row, column = 4).value = round(h_mtf_result, 2)
         
         else:
@@ -158,6 +175,7 @@ def rt(n: int):
     v_pointer = -1
     h_pointer = -1
 
+    
     v_mtf_pointer = -1
 
     for i in range(x):
@@ -176,18 +194,19 @@ def rt(n: int):
                 ver_flag = False
                 ver_edges += 1
             
-            if(v_pointer == -1):
+            if(v_pointer == -1 and h_pointer != -1):
                     
                     v_pointer = j
 
             #sprawdzanie czy wykryto przynajmniej 5 zbocz
             if(ver_edges>=5):
+                
                 ver_res += 1
                 v_mtf_pointer = j
                 h_pointer = i
                 break
 
-    print("ver_res: " + str(ver_res))
+    #print("ver_res: " + str(ver_res))
     #stosunek poprawnych kolumn (najlepszy wynik = 1, najgorszy wynik = 0)
     p_col_found = ver_res/px_20mm
 
@@ -199,8 +218,8 @@ def rt(n: int):
     real_v_px_resolution = math.floor(h/v_mm_resolution)
     sheet.cell(row = empty_row, column = 6).value = real_v_px_resolution
     
-    print("Rzeczywista pionowa rozdzielczosc: " + str(real_v_px_resolution))
-    print("Najwyzsza mozliwa pionowa rozdzielczosc " + str(math.floor(h/0.2)))
+    #print("Rzeczywista pionowa rozdzielczosc: " + str(real_v_px_resolution))
+    #print("Najwyzsza mozliwa pionowa rozdzielczosc " + str(math.floor(h/0.2)))
     sheet.cell(row = empty_row, column = 7).value = math.floor(h/0.2)
     #MTF
     
@@ -221,7 +240,7 @@ def rt(n: int):
                     v_vb_f = im2.getpixel((h_pointer, j))
 
             v_mtf_result = mtf(contrast(v_vw_f, v_vb_f), contrast(vw_0, vb_0))
-            print("vw_0:", vw_0, "vb_0:", vb_0, "v_vw_f:", v_vw_f, "v_vb_f:", v_vb_f)
+            #print("vw_0:", vw_0, "vb_0:", vb_0, "v_vw_f:", v_vw_f, "v_vb_f:", v_vb_f)
             print("v_mtf_result:", v_mtf_result)
             sheet.cell(row = empty_row, column = 8).value = round(v_mtf_result, 2)
         else:
@@ -230,7 +249,8 @@ def rt(n: int):
         sheet.cell(row = empty_row, column = 8).value = "Blad"
     
     wb.save('output.xlsx')  
-
+    
+    
 def main():
     
     for n in range(1,6):

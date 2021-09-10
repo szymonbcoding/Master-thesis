@@ -94,21 +94,24 @@ def main():
 
     #obliczanie średniej wartości pikseli pierwszego wiersza
     sum1 = 0
+    
     for i in range(x):
         for j in range(3):
             sum1 += px.getpixel((i, 0))[j]
 
     #dzielnik razy 3, bo 3 składowe - RGB
-    avr1 = sum1/(3*x)
+    avr1 = math.floor(sum1/(3*x))
 
     h_pointer = -1
 
     for i in range(x):
 
-        j = sum(px.getpixel((i, v_half)))
+        j = sum(px.getpixel((i, v_half)))/3
 
         if(find_odd_pixel(j, avr1)):
             h_pointer = i + 0.25 * square_side_px
+            
+            #print("avr1:", avr1, "sumoddpixel:", j)
             break
     
     crop_coords = []
@@ -119,9 +122,9 @@ def main():
 
         #left, top, right, down
         supp_list.append(h_pointer + i * square_side_px)
-        supp_list.append(v_half - 0.2 * square_side_px)
+        supp_list.append(v_half - 0.15 * square_side_px)
         supp_list.append(h_pointer + (i + 0.5) * square_side_px)
-        supp_list.append(v_half + 0.2 * square_side_px)
+        supp_list.append(v_half + 0.15 * square_side_px)
 
         crop_coords.append(supp_list)
 
@@ -129,8 +132,8 @@ def main():
 
     for i in range(9):
         cropped_images.append(px.crop((crop_coords[i][0], crop_coords[i][1], crop_coords[i][2], crop_coords[i][3])))
-        #cropped_images[i].save('kolor/' + str(i) + '.JPG')
-
+        #cropped_images[i].save('rgb/' + str(i) + '.JPG')
+    
     #labels = ["red", "yellow", "dark green", "light blue", "dark blue", "pink", "purple", "salmon", "light green"]
 
     for i in range(9):
@@ -155,6 +158,7 @@ def main():
             sheet.cell(row = empty_row, column = i*9 + 3 + j * 3).value = round(pd_list[j], 2)
 
     wb.save('output.xlsx')
+    
 
 if __name__ == "__main__":
     #main(photo, mode)

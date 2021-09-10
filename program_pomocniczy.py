@@ -2,12 +2,19 @@ from PIL import Image
 import PIL
 from openpyxl import load_workbook
 import math
+import glob
+
+def openFolder(path):
+    for filename in glob.glob(path + '/*.JPG'):
+        img=Image.open(filename)
+
+    return img
 
 w34 = 488.889
 w23 = 550
 h = 366.67
 
-im = Image.open('photo/test.JPG')
+im = openFolder("photo")
 x, y = im.size
 
 wb = load_workbook(filename = 'coordinates_v2.xlsx')
@@ -24,12 +31,17 @@ elif(0.705 <= y/x < 0.79):
 else:
     print("Nieobslugiwana proporcja obrazu.")
 
-label = "RG_RT"
+#           0           1        2         3         4        5        6        7       8      9
+label = ["BW_RT1", "BW_RT2", "BW_RT3", "BW_RT4", "BW_RT5", "GB_RT", "RB_RT", "RG_RT", "CD1", "CD2"]
+
+l = 7
+d = -3
+t = 1
 
 pointer = -1
 
 for i in range(2, 19):
-    if(label in sheet.cell(row = i, column = 1).value):
+    if(label[l] in sheet.cell(row = i, column = 1).value):
         pointer = i
 
 
@@ -40,16 +52,10 @@ if(pointer > 1):
     right = round(sheet.cell(row = pointer, column = 4).value, 4)
     down = round(sheet.cell(row = pointer, column = 5).value, 4)
     
-    
-    dleft = 1.5
-    dtop = -1
-    
-    dright = dleft
-    ddown = dtop
+    dright = d
+    ddown = t
 
-
-
-    im.crop(((left + dleft) * x/w, (top + dtop) * y/h, (right + dright) * x/w, (down + ddown) * y/h)).save('cropped_images/' + label + '.JPG')
+    im.crop(((left + d) * x/w, (top + t) * y/h, (right + dright) * x/w, (down + ddown) * y/h)).save('cropped_images/' + label[l] + '.JPG')
 else:
     print("Blad")
 

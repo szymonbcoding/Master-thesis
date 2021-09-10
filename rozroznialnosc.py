@@ -88,19 +88,18 @@ def main():
 
         #left, top, right, down
         supp_list.append(h_pointer + (i % 5) * square_side_px)
-        supp_list.append(q * v_quarter - 0.2 * square_side_px)
+        supp_list.append(q * v_quarter - 0.15 * square_side_px)
         supp_list.append(h_pointer + ((i % 5) + 0.5) * square_side_px)
-        supp_list.append(q * v_quarter + 0.2 * square_side_px)
+        supp_list.append(q * v_quarter + 0.15 * square_side_px)
 
         crop_coords.append(supp_list)
-    
-
+        
     cropped_images = []
 
     for i in range(10):
         cropped_images.append(px.crop((crop_coords[i][0], crop_coords[i][1], crop_coords[i][2], crop_coords[i][3])))
         #cropped_images[i].save('bw/' + str(i) + '.JPG')
-
+   
     good = 4
     notbad = 1
     
@@ -112,16 +111,16 @@ def main():
         a = calc_avr(cropped_images[i])
         
         if(i>0):
-            if(a - good > calc_avr(cropped_images[i - 1])):
+            if(abs(a - calc_avr(cropped_images[i - 1])) > good):
                 werdykt_b += 3
-            elif(a - notbad > calc_avr(cropped_images[i - 1])):
+            elif(abs(a - calc_avr(cropped_images[i - 1])) > notbad):
                 werdykt_b += 1
             
         sheet.cell(row = empty_row, column = i + 1).value = round(a, 2)
     
-    if(werdykt_b >= 12):
+    if(werdykt_b >= 11):
         sheet.cell(row = empty_row, column = 6).value = "Zadowalająca rozróżnialność"
-    elif(werdykt_b >= 4):
+    elif(werdykt_b >= 3):
         sheet.cell(row = empty_row, column = 6).value = "Dopuszczająca rozróżnialność"
     else:
         sheet.cell(row = empty_row, column = 6).value = "Niedostateczna rozróżnialność"
@@ -134,14 +133,14 @@ def main():
         a = calc_avr(cropped_images[i + 5])
 
         if(i>0):
-            if(a - good > calc_avr(cropped_images[i + 4])):
+            if(abs(a - calc_avr(cropped_images[i + 4])) > good):
                 werdykt_w += 3
-            elif(a - notbad > calc_avr(cropped_images[i + 4])):
+            elif(abs(a - calc_avr(cropped_images[i + 4])) > notbad):
                 werdykt_w += 1
         
         sheet.cell(row = empty_row, column = i + 7).value = round(a, 2)
     
-    if(werdykt_w >= 9):
+    if(werdykt_w >= 11):
         sheet.cell(row = empty_row, column = 12).value = "Zadowalająca rozróżnialność"
     elif(werdykt_w >= 3):
         sheet.cell(row = empty_row, column = 12).value = "Dopuszczająca rozróżnialność"
@@ -150,6 +149,7 @@ def main():
     
     
     wb.save('output.xlsx')
+    
 
 if __name__ == "__main__":
     main()

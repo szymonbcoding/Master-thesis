@@ -38,11 +38,11 @@ def dystorsja(dist_list):
     d = calc_dev(dist_list, a)
     pd = calc_perc_dev(d, a)
 
-    print("a:",a,"d:",d,"pd:",pd)
+    #print("a:",a,"d:",d,"pd:",pd)
 
     if(pd < tollerancy):
         #brak dystorsji
-        return 0
+        return 2
 
     else:
         differences = []
@@ -54,10 +54,10 @@ def dystorsja(dist_list):
 
         if(s > 0):
             #dystorsja poduszkowa
-            return 1
+            return 3
         elif(s < 0):
             #dystorsja beczkowa
-            return -1
+            return 1
 
 def processing(n: int):
     
@@ -72,8 +72,8 @@ def processing(n: int):
     
     print("x:", x, "y:", y)
 
-    back_value = 150
-    rect_value = 50
+    back_value = 100
+    rect_value = 80
 
     v_half = math.floor(y/2)
     h_half = math.floor(x/2)
@@ -178,55 +178,61 @@ def processing(n: int):
 
         print(d1, d2, d3, d4)
 
-        h_list = h_dist_up + h_dist_down
-        v_list = v_dist_left + v_dist_right
+        if(d1 and d2 and d3 and d4):
         
-        ha = calc_avr(h_list)
-        hd = calc_dev(h_list, ha)
-        hpd = calc_perc_dev(hd, ha)
+            h_list = h_dist_up + h_dist_down
+            v_list = v_dist_left + v_dist_right
+            
+            ha = calc_avr(h_list)
+            hd = calc_dev(h_list, ha)
+            hpd = calc_perc_dev(hd, ha)
+            
+            va = calc_avr(v_list)
+            vd = calc_dev(v_list, va)
+            vpd = calc_perc_dev(vd, va)
+            
         
-        va = calc_avr(v_list)
-        vd = calc_dev(v_list, va)
-        vpd = calc_perc_dev(vd, va)
-        
-    
-        
-        message = ""
-        
-        d = d1 + d2 + d3 + d4
-        
-        if(-1 <= d <= 1):
-            #brak dystorsji
-            message = "Brak dystorsji"
-        elif(d >= 3):
-            #dystorsja poduszkowa
-            message = "Dystorsja poduszkowa"
-        elif(d == 2): 
-            message = "Przypuszczalna dystorsja poduszkowa"
-        elif(d <= -3):
-            #dystorsja beczkowa
-            message = "Dystorsja beczkowa"
-        elif(d == -2):
-            message = "Przypuszczalna dystorsja beczkowa"
+            
+            message = ""
+            
+            
+            
+            d = d1 + d2 + d3 + d4
+            
+            if(7 <= d <= 9):
+                #brak dystorsji
+                message = "Brak dystorsji"
+            elif(d >= 11):
+                #dystorsja poduszkowa
+                message = "Dystorsja poduszkowa"
+            elif(d == 10): 
+                message = "Przypuszczalna dystorsja poduszkowa"
+            elif(d <= 5):
+                #dystorsja beczkowa
+                message = "Dystorsja beczkowa"
+            elif(d == 6):
+                message = "Przypuszczalna dystorsja beczkowa"
+            else:
+                #błąd
+                message = "Błąd"
+            
+            """
+            if(d1 == 0 and d2 == 0 and d3 == 0 and d4 == 0):
+                #brak dystorsji
+                message = "Brak dystorsji"
+            elif(d1 == 1 and d2 == 1 and d3 == 1 and d4 == 1):
+                #dystorsja poduszkowa
+                message = "Dystorsja poduszkowa"
+            elif(d1 == -1 and d2 == -1 and d3 == -1 and d4 == -1):
+                #dystorsja beczkowa
+                message = "Dystorsja beczkowa"
+            else:
+                #błąd
+                message = "Błąd"
+            """ 
+            output = [hpd, vpd, message]
         else:
-            #błąd
-            message = "Błąd"
-        
-        """
-        if(d1 == 0 and d2 == 0 and d3 == 0 and d4 == 0):
-            #brak dystorsji
-            message = "Brak dystorsji"
-        elif(d1 == 1 and d2 == 1 and d3 == 1 and d4 == 1):
-            #dystorsja poduszkowa
-            message = "Dystorsja poduszkowa"
-        elif(d1 == -1 and d2 == -1 and d3 == -1 and d4 == -1):
-            #dystorsja beczkowa
-            message = "Dystorsja beczkowa"
-        else:
-            #błąd
-            message = "Błąd"
-        """ 
-        output = [hpd, vpd, message]
+            output = [None, None, None]
     else:
         output = [None, None, None]
            
@@ -238,8 +244,6 @@ def main():
     sheet = wb['4_Dystorsje']
     
     empty_row = find_empty_row(sheet)
-    
-    
     
     for i in range(0, 4):
         if(processing(i)[0]):

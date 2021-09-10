@@ -4,6 +4,14 @@ import math
 
 from openpyxl import load_workbook
 
+import glob
+
+def openFolder(path):
+    for filename in glob.glob(path + '/*.JPG'):
+        img=Image.open(filename)
+
+    return img
+
 def find_empty_row(sh) -> int:
     
     r = 0
@@ -37,7 +45,7 @@ def main():
     h = 366.67
 
     #zaladowanie całego obrazu planszy
-    im1 = Image.open('photo/test.jpg')
+    im1 = openFolder("photo")
 
     x_all, y_all = im1.size
 
@@ -73,15 +81,15 @@ def main():
         hor_edges = 0
         hor_flag = False
 
-        for j in range (0, x):
+        for j in range(x):
 
             k = im2.getpixel((j,i))
             
-            if((k[1] >= 100) and find_max_index(k) == 1 and not hor_flag):
+            if((k[1] >= 100) and find_max_index(k) == 1 and k[0] <= 150 and k[2] <= 150 and not hor_flag):
 
                 hor_flag = True
             
-            elif((k[2] >= 100) and find_max_index(k) == 2 and hor_flag):
+            elif((k[2] >= 100) and find_max_index(k) == 2 and k[0] <= 150 and k[1] <= 150 and hor_flag):
                 
                 hor_flag = False
                 hor_edges += 1
@@ -123,11 +131,11 @@ def main():
 
             k = im2.getpixel((i,j))
             
-            if((k[2] >= 100) and find_max_index(k) == 2 and not ver_flag):
+            if((k[2] >= 100) and find_max_index(k) == 2 and k[0] <= 150 and k[1] <= 150 and not ver_flag):
 
                 ver_flag = True
             
-            elif((k[1] >= 100) and find_max_index(k) == 1 and ver_flag):
+            elif((k[1] >= 100) and find_max_index(k) == 1 and k[0] <= 150 and k[2] <= 150 and ver_flag):
                 
                 ver_flag = False
                 ver_edges += 1

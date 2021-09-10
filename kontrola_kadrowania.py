@@ -2,8 +2,16 @@ from PIL import Image
 import PIL
 import math
 
+import glob
+
+def openFolder(path):
+    for filename in glob.glob(path + '/*.JPG'):
+        img=Image.open(filename)
+
+    return img
+
 def is_red(value):
-    if(value[0]>=100 and value[1]<= 100 and value[2] <= 100):
+    if(value[0]>=50 and value[1]<= 150 and value[2] <= 150):
         return True
     else:
         return False
@@ -39,7 +47,7 @@ def correct_frame(photos):
 
 def main():
 
-    im = Image.open("photo/test.jpg")
+    im = openFolder("photo")
     x,y = im.size
 
     px = im.convert("RGB")

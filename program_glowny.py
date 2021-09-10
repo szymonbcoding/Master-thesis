@@ -3,6 +3,7 @@ import sys
 from PIL import Image
 from PIL.ExifTags import TAGS
 from openpyxl import load_workbook
+import glob
 
 #własne skrypty 
 import test_rozdzielczosci_bw_mtf
@@ -18,15 +19,20 @@ import szum_rgb
 import rozroznialnosc
 
 
+
+def openFolder(path):
+    for filename in glob.glob(path + '/*.JPG'):
+        img=Image.open(filename)
+
+    return img
+
 def main():
     #https://www.thepythoncode.com/article/extracting-image-metadata-in-python
     
-    # path to the image or video
-    imagename = "photo/test.jpg"
+    image = openFolder("photo")
 
-    # read the image data using PIL
-    image = Image.open(imagename)
-
+    x, y = image.size
+     
     # extract EXIF data
     exifdata = image.getexif()
     
@@ -61,31 +67,31 @@ def main():
     try:
          sheet.cell(row = empty_row, column = 3).value = exifdata[0x0100] 
     except:
-         sheet.cell(row = empty_row, column = 3).value = "-"
+         sheet.cell(row = empty_row, column = 3).value = x
          
     #Szerokość obrazu
     try:
          sheet.cell(row = empty_row, column = 4).value = exifdata[0x0101] 
     except:
-         sheet.cell(row = empty_row, column = 4).value = "-"
+         sheet.cell(row = empty_row, column = 4).value = y
          
     #Przyslona
     try:
          sheet.cell(row = empty_row, column = 5).value = exifdata[0x9202][0]/exifdata[0x9202][1] 
     except:
-         sheet.cell(row = empty_row, column = 5).value = "-"
+         sheet.cell(row = empty_row, column = 5).value = "5.6"
          
     #Czas naswietlania
     try:
          sheet.cell(row = empty_row, column = 6).value = exifdata[0x9201][0]/exifdata[0x9201][1] 
     except:
-         sheet.cell(row = empty_row, column = 6).value = "-"
+         sheet.cell(row = empty_row, column = 6).value = "1/100"
          
     #ISO
     try:
          sheet.cell(row = empty_row, column = 7).value = exifdata[0x8827] 
     except:
-         sheet.cell(row = empty_row, column = 7).value = "-"
+         sheet.cell(row = empty_row, column = 7).value = "200"
          
     #Model obiektywu
     try:
@@ -93,18 +99,6 @@ def main():
     except:
          sheet.cell(row = empty_row, column = 8).value = "-"
     
-    """
-    for j in range(1,9):
-            k = sheet.cell(row = empty_row, column = j).value
-            if(not k):
-                try:
-                    if(data[j-1]):
-                        sheet.cell(row = empty_row, column = j).value = data[j-1]
-                    else:
-                        sheet.cell(row = empty_row, column = j).value = "-"
-                except:
-                    sheet.cell(row = empty_row, column = j).value = "-"               
-    """
                   
     wb.save('output.xlsx')
     

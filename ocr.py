@@ -34,34 +34,40 @@ def recognition(n: int) -> float:
     #print(pytesseract.image_to_string(img, config=custom_config))
 
     f = open("OCR" + str(n) +"_temp.txt", "w")
+    
+    try:
+        if(pytesseract.image_to_string(img, config=custom_config)):
+            f.write(pytesseract.image_to_string(img, config=custom_config))
 
-    f.write(pytesseract.image_to_string(img, config=custom_config))
+            f.close()
 
-    f.close()
+            i=0
+            label = eval("OCR" + str(n) + "_nr_list")
 
-    i=0
-    label = eval("OCR" + str(n) + "_nr_list")
+            with open('OCR' + str(n) + '_temp.txt','r') as file: 
+                for line in file:
+                    if(line[0].isnumeric()):
+                        #printlabel[i] + tekst)
+                        #print("line:", line)
+                        value = label[i] + tekst
+                        #value = "6.5 Praca magisterska rnGC6mmmm"
 
-    with open('OCR' + str(n) + '_temp.txt','r') as file: 
-        for line in file:
-            if(line[0].isnumeric()):
-                #printlabel[i] + tekst)
-                #print("line:", line)
-                value = label[i] + tekst
-                #value = "6.5 Praca magisterska rnGC6mmmm"
-
-                if(value in line):
-                    print(getFontSize(line) + " - ok")
-                    if(i != len(label) - 1):
-                        i += 1
-                else:
-                    i -= 1
-                    break
-    if(i<0):
-        return 9
-    else:
-        return label[i]
-
+                        if(value in line):
+                            print(getFontSize(line) + " - ok")
+                            if(i != len(label) - 1):
+                                i += 1
+                        else:
+                            i -= 1
+                            break
+            if(i<0):
+                return 9
+            else:
+                return label[i]
+        else:
+            return 8
+    except:
+        return 8
+    
 def main():
     
     wb = load_workbook(filename = 'output.xlsx')
@@ -78,6 +84,8 @@ def main():
     
     if(min == 9):
         sheet.cell(row = empty_row, column = 1).value = "Nic nie rozpoznano"
+    elif(min == 8):
+        sheet.cell(row = empty_row, column = 1).value = "Blad modulu OCR"
     else:
         sheet.cell(row = empty_row, column = 1).value = min
 
