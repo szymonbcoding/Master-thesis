@@ -53,9 +53,11 @@ def main():
         
     #Model aparatu
     try:
-         sheet.cell(row = empty_row, column = 1).value = exifdata[0x0110] 
+         model = exifdata[0x0110]
+         sheet.cell(row = empty_row, column = 1).value =  model
     except:
-         sheet.cell(row = empty_row, column = 1).value = "-"
+         model = "-"
+         sheet.cell(row = empty_row, column = 1).value = model
          
     #Dlugosc ogniskowa
     try:
@@ -101,6 +103,22 @@ def main():
     
                   
     wb.save('output.xlsx')
+    
+    
+    wb2 = load_workbook(filename = 'komunikat.xlsx')
+    
+    sheet2 = wb['1']
+    
+    empty_col = 0
+    
+    for i in range(2, 1000):
+        if(not (sheet.cell(row = 1, column = i).value)):
+            empty_col = i
+            break
+     
+    sheet2.cell(row = 1, column = empty_col).value = model
+    
+    wb2.save('komunikat.xlsx')
     
     test_rozdzielczosci_bw_mtf.main()
     test_rozdzielczosci_rg.main()
