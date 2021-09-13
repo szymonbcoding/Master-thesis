@@ -19,12 +19,16 @@ def find_empty_row(sh) -> int:
             break
     return r
 
-#jeśli żadna ze składowych nie różni się od średniej
-#o więcej niż 30 to zwróć False
-#inaczej zwróć True
-
-#sprawdzanie czy w danym wierszu
-#ponad połowa pikseli różni się od wzorca
+def find_empty_col(sh, p: int) -> int:
+    
+    c = 0
+    
+    for i in range(2, 1000):
+        if(not (sh.cell(row = p, column = i).value)):
+            c = i
+            break
+    
+    return c
 
 def find_odd_pixel(v: int, avr1: float) -> bool:
     
@@ -77,6 +81,8 @@ def calc_percent_deviation(dev_list: list, avr_list: list) -> list:
 #def main(photo: PIL.Image.Image, mode: int) -> list:
 def main():
 
+    print("Przetwarzanie: Szum RGB...")
+    
     wb = load_workbook(filename = 'output.xlsx')
     sheet = wb['7_Szum_RGB']
     
@@ -158,8 +164,22 @@ def main():
             sheet.cell(row = empty_row, column = i*9 + 3 + j * 3).value = round(pd_list[j], 2)
 
     wb.save('output.xlsx')
+    wb.close()
+    """
+    wb2 = load_workbook(filename = 'komunikat.xlsx')
     
-
+    sheet2 = wb2['Arkusz1']
+    
+    empty_col = find_empty_col(sheet2, ?)
+    
+    sheet2.cell(row = ?, column = empty_col).value = ?
+    
+    sheet2.cell(row = ? + 1, column = empty_col).value = ?
+    
+    wb2.save('komunikat.xlsx')
+    """
+    print("Szum RGB: Zakonczono")
+    
 if __name__ == "__main__":
     #main(photo, mode)
     main()

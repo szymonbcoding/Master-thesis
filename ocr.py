@@ -12,6 +12,17 @@ def find_empty_row(sh) -> int:
             break
     return r
 
+def find_empty_col(sh, p: int) -> int:
+    
+    c = 0
+    
+    for i in range(2, 1000):
+        if(not (sh.cell(row = p, column = i).value)):
+            c = i
+            break
+    
+    return c
+
 def getFontSize(line: str) -> str:
 
     if(line[1] == ' '):
@@ -53,7 +64,7 @@ def recognition(n: int) -> float:
                         #value = "6.5 Praca magisterska rnGC6mmmm"
 
                         if(value in line):
-                            print(getFontSize(line) + " - ok")
+                            #print(getFontSize(line) + " - ok")
                             if(i != len(label) - 1):
                                 i += 1
                         else:
@@ -70,6 +81,8 @@ def recognition(n: int) -> float:
     
 def main():
     
+    print("Przetwaranie OCR...")
+    
     wb = load_workbook(filename = 'output.xlsx')
     sheet = wb['5_OCR']
     
@@ -83,13 +96,28 @@ def main():
             min = temp
     
     if(min == 9):
-        sheet.cell(row = empty_row, column = 1).value = "Nic nie rozpoznano"
+        out = "Nic nie rozpoznano"
     elif(min == 8):
-        sheet.cell(row = empty_row, column = 1).value = "Blad modulu OCR"
+        out = "Blad modulu OCR"
     else:
-        sheet.cell(row = empty_row, column = 1).value = min
+        out = min
 
+    sheet.cell(row = empty_row, column = 1).value = out
+    
     wb.save('output.xlsx')
+    wb.close()
+    
+    wb2 = load_workbook(filename = 'komunikat.xlsx')
+    
+    sheet2 = wb2['Arkusz1']
+    
+    empty_col = find_empty_col(sheet2, 12)
+    
+    sheet2.cell(row = 12, column = empty_col).value = out
+    
+    wb2.save('komunikat.xlsx')
+    print("OCR przetworzone")
+    
     
 if __name__ == "__main__":
     main()

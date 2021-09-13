@@ -13,6 +13,17 @@ def find_empty_row(sh) -> int:
             break
     return r
 
+def find_empty_col(sh, p: int) -> int:
+    
+    c = 0
+    
+    for i in range(2, 1000):
+        if(not (sh.cell(row = p, column = i).value)):
+            c = i
+            break
+    
+    return c
+
 def calc_avr(photo: PIL.Image.Image) -> float:
     
     w, h = photo.size
@@ -59,11 +70,27 @@ def main():
     dev_supp = calc_deviation(px, avr_supp)
     pdev_supp = calc_percent_deviation(dev_supp, avr_supp)
 
+    d_out = round(dev_supp, 2)
+    pd_out = round(pdev_supp, 2)
+    
     sheet.cell(row = empty_row, column = 1).value = round(avr_supp, 2)
-    sheet.cell(row = empty_row, column = 2).value = round(dev_supp, 2)
-    sheet.cell(row = empty_row, column = 3).value = round(pdev_supp, 2)
+    sheet.cell(row = empty_row, column = 2).value = d_out
+    sheet.cell(row = empty_row, column = 3).value = pd_out
     
     wb.save('output.xlsx')
+    wb.close()
+    
+    wb2 = load_workbook(filename = 'komunikat.xlsx')
+    
+    sheet2 = wb2['Arkusz1']
+    
+    empty_col = find_empty_col(sheet2, 13)
+    
+    sheet2.cell(row = 13, column = empty_col).value = d_out
+    
+    sheet2.cell(row = 14, column = empty_col).value = pd_out
+    
+    wb2.save('komunikat.xlsx')
     
 if __name__ == "__main__":
     #main(photo, mode)

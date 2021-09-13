@@ -22,6 +22,17 @@ def find_empty_row(sh) -> int:
             break
     return r
 
+def find_empty_col(sh, p: int) -> int:
+    
+    c = 0
+    
+    for i in range(2, 1000):
+        if(not (sh.cell(row = p, column = i).value)):
+            c = i
+            break
+    
+    return c
+
 
 def contrast(vmax: int, vmin: int) -> float:
     return ((vmax - vmin)/(vmax + vmin))
@@ -34,7 +45,7 @@ def rt(n: int):
     wb = load_workbook(filename = 'output.xlsx')
     
     sheet = wb['2a_BW_RT' + str(n)]
-    print("Processing: BW_RT", str(n))
+    print("Przetwarzanie: BW_RT", str(n) + "...")
     
     empty_row = find_empty_row(sheet)
     
@@ -241,7 +252,7 @@ def rt(n: int):
 
             v_mtf_result = mtf(contrast(v_vw_f, v_vb_f), contrast(vw_0, vb_0))
             #print("vw_0:", vw_0, "vb_0:", vb_0, "v_vw_f:", v_vw_f, "v_vb_f:", v_vb_f)
-            print("v_mtf_result:", v_mtf_result)
+            #print("v_mtf_result:", v_mtf_result)
             sheet.cell(row = empty_row, column = 8).value = round(v_mtf_result, 2)
         else:
             sheet.cell(row = empty_row, column = 8).value = "Blad"
@@ -249,12 +260,32 @@ def rt(n: int):
         sheet.cell(row = empty_row, column = 8).value = "Blad"
     
     wb.save('output.xlsx')  
+    wb.close()
+    
+    return real_v_px_resolution * real_h_px_resolution
     
     
 def main():
     
+    bw_real_res_list = []
+    
     for n in range(1,6):
-        rt(n)
+        bw_real_res_list.append(rt(n))
+        
+    bw_real_res_list.sort()
+    
+    wb2 = load_workbook(filename = 'komunikat.xlsx')
+    
+    sheet2 = wb2['Arkusz1']
+    
+    empty_col = find_empty_col(sheet2, 3)
+    
+    sheet2.cell(row = 3, column = empty_col).value = bw_real_res_list[-1]
+    
+    sheet2.cell(row = 4, column = empty_col).value = bw_real_res_list[0]
+    
+    wb2.save('komunikat.xlsx') 
+    print("BW_RT przetworzone")
     
   
 if __name__ == "__main__":

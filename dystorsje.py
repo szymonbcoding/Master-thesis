@@ -13,6 +13,17 @@ def find_empty_row(sh) -> int:
             break
     return r
 
+def find_empty_col(sh, p: int) -> int:
+    
+    c = 0
+    
+    for i in range(2, 1000):
+        if(not (sh.cell(row = p, column = i).value)):
+            c = i
+            break
+    
+    return c
+
 def calc_avr(dist_list) -> float:
     
     return sum(dist_list)/len(dist_list)
@@ -70,7 +81,7 @@ def processing(n: int):
     mono = ImageOps.grayscale(im)
     x, y = mono.size
     
-    print("x:", x, "y:", y)
+    #print("x:", x, "y:", y)
 
     back_value = 100
     rect_value = 80
@@ -176,7 +187,7 @@ def processing(n: int):
         d3 = dystorsja(v_dist_left)
         d4 = dystorsja(v_dist_right)  
 
-        print(d1, d2, d3, d4)
+        #print(d1, d2, d3, d4)
 
         if(d1 and d2 and d3 and d4):
         
@@ -191,30 +202,7 @@ def processing(n: int):
             vd = calc_dev(v_list, va)
             vpd = calc_perc_dev(vd, va)
             
-        
-            
-            message = ""
-            
-            
-            
             d = d1 + d2 + d3 + d4
-            
-            if(7 <= d <= 9):
-                #brak dystorsji
-                message = "Brak dystorsji"
-            elif(d >= 11):
-                #dystorsja poduszkowa
-                message = "Dystorsja poduszkowa"
-            elif(d == 10): 
-                message = "Przypuszczalna dystorsja poduszkowa"
-            elif(d <= 5):
-                #dystorsja beczkowa
-                message = "Dystorsja beczkowa"
-            elif(d == 6):
-                message = "Przypuszczalna dystorsja beczkowa"
-            else:
-                #błąd
-                message = "Błąd"
             
             """
             if(d1 == 0 and d2 == 0 and d3 == 0 and d4 == 0):
@@ -230,7 +218,7 @@ def processing(n: int):
                 #błąd
                 message = "Błąd"
             """ 
-            output = [hpd, vpd, message]
+            output = [hpd, vpd, d]
         else:
             output = [None, None, None]
     else:
@@ -245,19 +233,85 @@ def main():
     
     empty_row = find_empty_row(sheet)
     
+    do_sum = 0
+    pd = 0
+    n = 0
     for i in range(0, 4):
+        print("Przetwarzanie: Dystorsje" + str(i + 1) + "...")
         if(processing(i)[0]):
             #hpd
-            sheet.cell(row = empty_row, column = (3 * i + 1)).value = round(processing(i)[0], 3)
+            h = round(processing(i)[0], 3)
+            sheet.cell(row = empty_row, column = (3 * i + 1)).value = h
             #vpd
-            sheet.cell(row = empty_row, column = (3 * i + 2)).value = round(processing(i)[1], 3)
+            v = round(processing(i)[1], 3)
+            sheet.cell(row = empty_row, column = (3 * i + 2)).value = v
+
+            pd += h + v
+            n += 2
+            
             #werdykt
-            sheet.cell(row = empty_row, column = (3 * i + 3)).value = processing(i)[2]
+            
+            message = ""
+            
+            do = processing(i)[2]
+            do_sum += do
+            
+            if(7 <= do <= 9):
+                #brak dystorsji
+                message = "Brak dystorsji"
+            elif(do >= 11):
+                #dystorsja poduszkowa
+                message = "Dystorsja poduszkowa"
+            elif(do == 10): 
+                message = "Przypuszczalna dystorsja poduszkowa"
+            elif(do <= 5):
+                #dystorsja beczkowa
+                message = "Dystorsja beczkowa"
+            elif(do == 6):
+                message = "Przypuszczalna dystorsja beczkowa"
+            else:
+                #błąd
+                message = "Błąd"
+            
+            sheet.cell(row = empty_row, column = (3 * i + 3)).value = message
         else:
             for j in range(1, 4):
                 sheet.cell(row = empty_row, column = (3 * i + j)).value = "Blad"
                 
     wb.save('output.xlsx')
-
+    wb.close()
+    
+    wb2 = load_workbook(filename = 'komunikat.xlsx')
+    
+    sheet2 = wb2['Arkusz1']
+    
+    empty_col = find_empty_col(sheet2, 10)
+    
+    sheet2.cell(row = 10, column = empty_col).value = pd/n
+    
+    m = ""
+     
+    if(29 <= do_sum <= 35):
+        #brak dystorsji
+        m = "Brak dystorsji"
+    elif(do_sum >= 41):
+        #dystorsja poduszkowa
+        m = "Dystorsja poduszkowa"
+    elif(40 >= do_sum >= 36): 
+        m = "Przypuszczalna dystorsja poduszkowa"
+    elif(do_sum <= 23):
+        #dystorsja beczkowa
+        m = "Dystorsja beczkowa"
+    elif(24 <= do_sum <= 28):
+        m = "Przypuszczalna dystorsja beczkowa"
+    else:
+        #błąd
+        m = "Błąd"
+    
+    sheet2.cell(row = 11, column = empty_col).value = m
+    
+    wb2.save('komunikat.xlsx') 
+    print("Dystorsje przetworzone")
+    
 if __name__ == "__main__":
     main()

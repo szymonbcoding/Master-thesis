@@ -21,6 +21,17 @@ def find_empty_row(sh) -> int:
             break
     return r
 
+def find_empty_col(sh, p: int) -> int:
+    
+    c = 0
+    
+    for i in range(2, 1000):
+        if(not (sh.cell(row = p, column = i).value)):
+            c = i
+            break
+    
+    return c
+
 def find_max_index(t: tuple) -> int:
     max = -1
     max_index = -1
@@ -32,6 +43,8 @@ def find_max_index(t: tuple) -> int:
     return max_index
 
 def main():
+    
+    print("RB_RT: Przetwarzanie...")
     
     wb = load_workbook(filename = 'output.xlsx')
     sheet = wb['2d_RB_RT']
@@ -101,7 +114,7 @@ def main():
                 hor_res += 1
                 break
 
-    print("hor_res: " + str(hor_res))
+    #print("hor_res: " + str(hor_res))
     #stosunek poprawnych wierszy (najlepszy mozliwy wynik = 1, najgorszy mozliwy wynik = 0)
     p_row_found = hor_res/px_20mm
 
@@ -113,8 +126,8 @@ def main():
     real_h_px_resolution = math.floor(w/h_mm_resolution)
     sheet.cell(row = empty_row, column = 2).value = real_h_px_resolution
     
-    print("Rzeczywista pozioma rozdzielczosc: " + str(real_h_px_resolution))
-    print("Maksymalna mozliwa pozioma rozdzielczosc " + str(math.floor(w/0.2)))
+    #print("Rzeczywista pozioma rozdzielczosc: " + str(real_h_px_resolution))
+    #print("Maksymalna mozliwa pozioma rozdzielczosc " + str(math.floor(w/0.2)))
     sheet.cell(row = empty_row, column = 3).value = math.floor(w/0.2)
     
     #PETLA TESTU ROZDZIELCZOSCI PIONOWEJ
@@ -144,7 +157,7 @@ def main():
                 ver_res += 1
                 break
 
-    print("ver_res: " + str(ver_res))
+    #print("ver_res: " + str(ver_res))
     #stosunek poprawnych kolumn (najlepszy wynik = 1, najgorszy wynik = 0)
     p_col_found = ver_res/px_20mm
 
@@ -156,11 +169,24 @@ def main():
     real_v_px_resolution = math.floor(h/v_mm_resolution)
     sheet.cell(row = empty_row, column = 5).value = real_v_px_resolution
     
-    print("Rzeczywista pionowa rozdzielczosc: " + str(real_v_px_resolution))
-    print("Najwyzsza mozliwa pionowa rozdzielczosc " + str(math.floor(h/0.2)))
+    #print("Rzeczywista pionowa rozdzielczosc: " + str(real_v_px_resolution))
+    #print("Najwyzsza mozliwa pionowa rozdzielczosc " + str(math.floor(h/0.2)))
     sheet.cell(row = empty_row, column = 6).value = math.floor(h/0.2)
 
     wb.save('output.xlsx')
+    wb.close()
+    
+    wb2 = load_workbook(filename = 'komunikat.xlsx')
+    
+    sheet2 = wb2['Arkusz1']
+    
+    empty_col = find_empty_col(sheet2, 7)
+    
+    sheet2.cell(row = 7, column = empty_col).value = real_h_px_resolution * real_v_px_resolution
+    
+    wb2.save('komunikat.xlsx') 
+    
+    print("RG_RT: Zakonczono")
     
 if __name__ == "__main__":
     main()

@@ -103,11 +103,11 @@ def main():
     
                   
     wb.save('output.xlsx')
-    
+    wb.close()
     
     wb2 = load_workbook(filename = 'komunikat.xlsx')
     
-    sheet2 = wb['1']
+    sheet2 = wb2['Arkusz1']
     
     empty_col = 0
     
@@ -115,8 +115,11 @@ def main():
         if(not (sheet.cell(row = 1, column = i).value)):
             empty_col = i
             break
-     
+    #model
     sheet2.cell(row = 1, column = empty_col).value = model
+    
+    #rozdzielczosc deklarowana przez producenta
+    sheet2.cell(row = 2, column = empty_col).value = x * y
     
     wb2.save('komunikat.xlsx')
     
@@ -130,6 +133,7 @@ def main():
     szum_bw.main()
     szum_rgb.main()
     rozroznialnosc.main()
+    print("Koniec.")
     
 if __name__ == "__main__":
     main()

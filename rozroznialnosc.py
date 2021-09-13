@@ -17,6 +17,17 @@ def find_empty_row(sh) -> int:
             break
     return r
 
+def find_empty_col(sh, p: int) -> int:
+    
+    c = 0
+    
+    for i in range(2, 1000):
+        if(not (sh.cell(row = p, column = i).value)):
+            c = i
+            break
+    
+    return c
+
 square_side_mm = 20
 
 def find_odd_pixel(v: int, avr1: float) -> bool:
@@ -43,6 +54,8 @@ def calc_avr(photo: PIL.Image.Image) -> float:
 #def main(photo: PIL.Image.Image, mode: int) -> list:
 def main():
 
+    print("Przetwarzanie: Rozroznialnosc...")
+    
     wb = load_workbook(filename = 'output.xlsx')
     sheet = wb['8_Rozroznialnosc']
     
@@ -111,19 +124,23 @@ def main():
         a = calc_avr(cropped_images[i])
         
         if(i>0):
-            if(abs(a - calc_avr(cropped_images[i - 1])) > good):
+            ab_r = abs(a - calc_avr(cropped_images[i - 1]))
+            if(ab_r > good):
                 werdykt_b += 3
-            elif(abs(a - calc_avr(cropped_images[i - 1])) > notbad):
+            elif(ab_r > notbad):
                 werdykt_b += 1
+            sheet.cell(row = empty_row, column = i).value = round(ab_r, 2)
             
-        sheet.cell(row = empty_row, column = i + 1).value = round(a, 2)
+        #sheet.cell(row = empty_row, column = i + 1).value = round(a, 2)
     
     if(werdykt_b >= 11):
-        sheet.cell(row = empty_row, column = 6).value = "Zadowalająca rozróżnialność"
+        m_b = "Zadowalająca rozróżnialność"
     elif(werdykt_b >= 3):
-        sheet.cell(row = empty_row, column = 6).value = "Dopuszczająca rozróżnialność"
+        m_b = "Dopuszczająca rozróżnialność"
     else:
-        sheet.cell(row = empty_row, column = 6).value = "Niedostateczna rozróżnialność"
+        m_b = "Niedostateczna rozróżnialność"
+        
+    sheet.cell(row = empty_row, column = 5).value = m_b
     
     werdykt_w = -1
     
@@ -133,22 +150,37 @@ def main():
         a = calc_avr(cropped_images[i + 5])
 
         if(i>0):
-            if(abs(a - calc_avr(cropped_images[i + 4])) > good):
+            aw_r = abs(a - calc_avr(cropped_images[i + 4]))
+            if(aw_r > good):
                 werdykt_w += 3
-            elif(abs(a - calc_avr(cropped_images[i + 4])) > notbad):
+            elif(aw_r > notbad):
                 werdykt_w += 1
+            sheet.cell(row = empty_row, column = i + 5).value = round(aw_r, 2)
         
-        sheet.cell(row = empty_row, column = i + 7).value = round(a, 2)
     
     if(werdykt_w >= 11):
-        sheet.cell(row = empty_row, column = 12).value = "Zadowalająca rozróżnialność"
+        m_w = "Zadowalająca rozróżnialność"
     elif(werdykt_w >= 3):
-        sheet.cell(row = empty_row, column = 12).value = "Dopuszczająca rozróżnialność"
+        m_w = "Dopuszczająca rozróżnialność"
     else:
-        sheet.cell(row = empty_row, column = 12).value = "Niedostateczna rozróżnialność"
-    
+        m_w = "Niedostateczna rozróżnialność"
+    sheet.cell(row = empty_row, column = 10).value = m_w
     
     wb.save('output.xlsx')
+    wb.close()
+    wb2 = load_workbook(filename = 'komunikat.xlsx')
+    
+    sheet2 = wb2['Arkusz1']
+    
+    empty_col = find_empty_col(sheet2, 16)
+    
+    sheet2.cell(row = 16, column = empty_col).value = m_b
+    
+    sheet2.cell(row = 17, column = empty_col).value = m_w
+    
+    wb2.save('komunikat.xlsx')
+    
+    print("Rozroznialnosc przetworzona")
     
 
 if __name__ == "__main__":
