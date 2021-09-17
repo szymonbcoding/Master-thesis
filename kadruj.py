@@ -53,15 +53,22 @@ def choose_crop_coordinates(lt: list, x: int, y: int, mfw: int, mfh: int) -> tup
     #input 
     #list: left-top, right-top, left-down, right-down
     
+    lt1 = lt
     
     for i in range(4):
             
             xf = i%2
             yf = math.floor(i/2)
             
-            lt[i][0] = xf * (x - mfw) + lt[i][0]
-            lt[i][1] = yf * (y - mfh) + lt[i][1]
-            
+            lt1[i][0] = xf * (x - mfw) + lt1[i][0]
+            lt1[i][1] = yf * (y - mfh) + lt1[i][1]
+    
+    for i in range(4):
+        
+        for j in range(2):
+            print(lt[i][j], end = ' ')
+        print()
+    
     """
     Rownoznaczny kod, ale mniej czytelny
     for i in range(4):
@@ -74,26 +81,28 @@ def choose_crop_coordinates(lt: list, x: int, y: int, mfw: int, mfh: int) -> tup
     #left
     min_hor = 10000
     for i in range(4):
-        if(lt[i][0] < min_hor):
-            min_hor = lt[i][0]
+        if(lt1[i][0] < min_hor):
+            min_hor = lt1[i][0]
             
     #top
     min_vert = 10000
     for i in range(4):
-        if(lt[i][1] < min_vert):
-            min_vert = lt[i][1]
+        if(lt1[i][1] < min_vert):
+            min_vert = lt1[i][1]
             
     #right
     max_hor = -1
     for i in range(4):
-        if(lt[i][0] < max_hor):
-            max_hor = lt[i][0]
+        if(lt1[i][0] > max_hor):
+            max_hor = lt1[i][0]
             
     #down
     max_vert = -1
     for i in range(4):
-        if(lt[i][1] < max_vert):
-            max_vert = lt[i][1]
+        if(lt1[i][1] > max_vert):
+            max_vert = lt1[i][1]
+    
+    print("min_hor:", min_hor, "min_vert:", min_vert, "max_hor:", max_hor, "max_vert:", max_vert)
             
     if(not(min_vert == 10000 or min_hor == 10000 or max_vert == -1 or max_hor == -1 )):
         
@@ -133,8 +142,8 @@ def find_crop_point(img: Image.Image) -> list:
     max2 = 0
     p_max2 = -1
 
-    find_min_on = False
-    find_max2_on = False
+    #finding stage
+    fs = 0
 
     for i in range(y):
         liczba = 0 
@@ -148,27 +157,33 @@ def find_crop_point(img: Image.Image) -> list:
 
     #find crop_point
     for index, value in enumerate(row_points):
+        
         #find max1
-        if(value > max1 and not find_min_on):
-            max1 = value
-            p_max1 = index
-            
-        elif(max1 * 0.5 > value and max1 - 10 > value):
-            find_min_on = True
+        if(fs == 0):
         
+            if(value > max1):
+                max1 = value
+                p_max1 = index
+                
+            elif(max1 * 0.5 > value and max1 - 10 > value):
+          
+                fs = 1
+                
         #find min
-        if(find_min_on and value < min):
-            min = value
-            p_min = index
-            
-        elif(find_min_on and min * 2 < value and min + 10 < value):
-            find_min_on = False
-            find_max2_on = True
+        if(fs == 1):
         
+            if(value < min):
+                min = value
+                p_min = index
+                
+            elif(min * 2 < value and min + 10 < value):
+                fs = 2
+        
+        if(fs == 2):
         #find max2
-        if(find_max2_on and value > max2):
-            max2 = value
-            p_max2 = index
+            if(value > max2):
+                max2 = value
+                p_max2 = index
             
     if(not (p_max1 == -1 or p_min == -1 or p_max2 == -1)):
         print("MAX1 - value:", max1, "index:", p_max1)
