@@ -4,6 +4,12 @@ import math
 
 import glob
 
+def openFolder(path):
+    for filename in glob.glob(path + '/*.JPG'):
+        img=Image.open(filename)
+
+    return img
+
 def find_max_index(t: tuple) -> int:
     max = -1
     max_index = -1
@@ -16,12 +22,6 @@ def find_max_index(t: tuple) -> int:
 
 def is_red(value: tuple) -> bool:
     if(value[0]>=130 and value[1]<= 130 and value[2] <= 130 and find_max_index(value) == 0):
-        return True
-    else:
-        return False
-    
-def is_green(value) -> bool:
-    if(value[1]>=50 and value[0]<= 150 and value[2] <= 150 and find_max_index(value) == 1):
         return True
     else:
         return False
@@ -41,7 +41,11 @@ def vertexes_cropped_images(px: Image.Image, mfw: float, mfh: float, x: int, y: 
     cropped_images = []
 
     for i in range(4):
-        cropped_images.append(px.crop((crop_coords[i][0], crop_coords[i][1], crop_coords[i][2], crop_coords[i][3])))
+        p = px.crop((crop_coords[i][0], crop_coords[i][1], crop_coords[i][2], crop_coords[i][3]))
+        p.save("crop_pom/pom" + str(i) + ".png")
+        cropped_images.append(p)
+        
+        
         
     return cropped_images
 
@@ -100,7 +104,7 @@ def choose_crop_coordinates(lt: list, x: int, y: int, mfw: int, mfh: int) -> tup
         return (-1, -1, -1, -1)
      
 
-def find_crop_point(n: int, img: Image.Image):
+def find_crop_point(img: Image.Image) -> list:
     
     im = img
     
@@ -189,18 +193,19 @@ def find_crop_point(n: int, img: Image.Image):
         if(not(first == -1 or last == -1)):
             cpy = p_min
             cpx = first + math.floor((last - first)/2)
-        
-            print("Punkt wyciecia:")
-            print(cpx, cpy)
             
-            return (cpx, cpy)
+            cp = [cpx, cpy]
+            print("Punkt wyciecia:")
+            print(cp)
+            
+            return cp
 
         else:
             print("Blad znalezienia pierwszego i ostatniego czerwonego piksela w wierszu min")
-            return (-1, -1)
+            return [-1, -1]
     else:
         print("Blad indeksow do znalezienia minimum czerwonego")
-        return (-2, -2)
+        return [-2, -2]
     
     
     """
@@ -210,37 +215,41 @@ def find_crop_point(n: int, img: Image.Image):
 
 def main():
     
-    im = Image.open("folder/s1.JPG")
+    im = openFolder("photo")
 
     #okreslenie o ile wycinek ma byc dalej wyciety od rogu zdjecia planszy
     x, y = im.size
+    """
     w_f = -1
     h_f = -1
     if(0.63 < y/x < 0.705):
-        w_f = 1/40
-        h_f = 1/26
+        w_f = 3/40
+        h_f = 3/30
     elif(0.705 <= y/x < 0.79):
-        w_f = 1/40
-        h_f = 1/30
+        w_f = 3/40
+        h_f = 3/30
     else:
         print("Nieobslugiwana proporcja obrazu.")
     
     
     mfw = math.floor(x * w_f)
     mfh = math.floor(y * h_f)
+    """
+    mfw = 300
+    mfh = 300
     
     #przygotowanie wycinkow rogow kadrow
     cropped_images = []
     cropped_images = vertexes_cropped_images(im, mfw, mfh, x, y)
     
-    tuple_list = []
+    coords_list = []
     
     #znalezienie gdzie jest punkt wyciecia na kazdym obszarze do kontroli kadrowania planszy
     for i in range(4):
-        tuple_list.append(find_crop_point(i, cropped_images[i]))
+        coords_list.append(find_crop_point(cropped_images[i]))
     
     #ustalenie ktore z punktow wyciecia definiuje jak najwiekszy wycinek i na jego podstawie przygtowanie wpolrzednych do kadrowania
-    im.crop(choose_crop_coordinates(tuple_list, x, y, mfw, mfh)).save("photo/pokadrowaniu.png")
+    im.crop(choose_crop_coordinates(coords_list, x, y, mfw, mfh)).save("cropped_photo/pokadrowaniu.png")
 
 if __name__ == "__main__":
     main()
