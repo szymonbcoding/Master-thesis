@@ -20,8 +20,21 @@ def find_max_index(t: tuple) -> int:
             
     return max_index
 
+def is_dark_red(value: tuple) -> bool:
+    if((value[0] > 1.4 * value[1] and value[0] > value[2] * 1.4) and (value[0] > 20 + value[1] and value[0] > value[2] + 20)):
+        return True
+    else:
+        return False
+
+def red_diff(value: tuple) -> bool:
+    if(value[0] - 15 > value[1] and value[0] -15 > value[2]):
+        return True
+    else:
+        return False
+
 def is_red(value: tuple) -> bool:
-    if(value[0]>=130 and value[1]<= 130 and value[2] <= 130 and find_max_index(value) == 0):
+    if((value[0]>=130 and value[1]< 130 and value[2] < 130 and red_diff(value) and find_max_index(value) == 0) or is_dark_red(value)):
+    #if((value[0]>=130 and value[1]<= 130 and value[2] <= 130 and find_max_index(value) == 0)):
         return True
     else:
         return False
@@ -234,22 +247,7 @@ def main():
 
     #okreslenie o ile wycinek ma byc dalej wyciety od rogu zdjecia planszy
     x, y = im.size
-    """
-    w_f = -1
-    h_f = -1
-    if(0.63 < y/x < 0.705):
-        w_f = 3/40
-        h_f = 3/30
-    elif(0.705 <= y/x < 0.79):
-        w_f = 3/40
-        h_f = 3/30
-    else:
-        print("Nieobslugiwana proporcja obrazu.")
-    
-    
-    mfw = math.floor(x * w_f)
-    mfh = math.floor(y * h_f)
-    """
+
     mfw = 300
     mfh = 300
     
