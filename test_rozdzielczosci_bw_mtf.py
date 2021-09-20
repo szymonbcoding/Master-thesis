@@ -6,6 +6,10 @@ from openpyxl import load_workbook
 
 import glob
 
+def takeThird(elem: tuple) -> float:
+    return elem[2]
+
+
 def openFolder(path):
     for filename in glob.glob(path + '/*.JPG'):
         img=Image.open(filename)
@@ -70,7 +74,7 @@ def rt(n: int):
     px_20mm = math.ceil(y_all * MAX/h)
 
     #zaladowanie obrazu w wersji monochromatycznej
-    im2 = Image.open('cropped_images/BW_RT' + str(n) + '.JPG').convert("L")
+    im2 = Image.open('cropped_images/BW_RT' + str(n) + '.png').convert("L")
 
     #rozdzielczosc wycinka
     x, y = im2.size
@@ -262,7 +266,7 @@ def rt(n: int):
     wb.save('output.xlsx')  
     wb.close()
     
-    return real_v_px_resolution * real_h_px_resolution
+    return (real_h_px_resolution, real_v_px_resolution, real_h_px_resolution * real_v_px_resolution)
     
     
 def main():
@@ -272,17 +276,46 @@ def main():
     for n in range(1,6):
         bw_real_res_list.append(rt(n))
         
-    bw_real_res_list.sort()
+    bw_real_res_list.sort(key = takeThird)
+    
+    s_v = 0
+    s_h = 0
+    s_vh = 0
+    
+    for n in bw_real_res_list:
+        s_h += n[0]
+        s_v += n[1]
+        s_vh += n[2]
     
     wb2 = load_workbook(filename = 'komunikat.xlsx')
     
     sheet2 = wb2['Arkusz1']
     
-    empty_col = find_empty_col(sheet2, 3)
+    empty_col = find_empty_col(sheet2, 4)
     
-    sheet2.cell(row = 3, column = empty_col).value = bw_real_res_list[-1]
+    #srednia
     
-    sheet2.cell(row = 4, column = empty_col).value = bw_real_res_list[0]
+    sheet2.cell(row = 4, column = empty_col).value = round(s_vh/5, 2)
+    
+    sheet2.cell(row = 5, column = empty_col).value = round(s_h/5, 2)
+    
+    sheet2.cell(row = 6, column = empty_col).value = round(s_v/5, 2)
+    
+    #najlepszy wynik
+    
+    sheet2.cell(row = 7, column = empty_col).value = bw_real_res_list[-1][2]
+    
+    sheet2.cell(row = 8, column = empty_col).value = bw_real_res_list[-1][0]
+    
+    sheet2.cell(row = 9, column = empty_col).value = bw_real_res_list[-1][1]
+    
+    #najgorszy wynik
+    
+    sheet2.cell(row = 10, column = empty_col).value = bw_real_res_list[0][2]
+    
+    sheet2.cell(row = 11, column = empty_col).value = bw_real_res_list[0][0]
+    
+    sheet2.cell(row = 12, column = empty_col).value = bw_real_res_list[0][1]
     
     wb2.save('komunikat.xlsx') 
     print("BW_RT przetworzone")

@@ -70,7 +70,7 @@ def main():
 
     for i in range(1, 6):
     
-        image_list.append(Image.open("cropped_images/BW_RT" + str(i) + ".JPG").convert("L"))
+        image_list.append(Image.open("cropped_images/BW_RT" + str(i) + ".png").convert("L"))
 
     sv = 0
 
@@ -108,11 +108,11 @@ def main():
     
     sheet2 = wb2['Arkusz1']
     
-    empty_col = find_empty_col(sheet2, 8)
+    empty_col = find_empty_col(sheet2, 22)
     
-    sheet2.cell(row = 8, column = empty_col).value = abs(a_c - a_v)
+    #sheet2.cell(row = 9, column = empty_col).value = abs(a_c - a_v)
     
-    sheet2.cell(row = 9, column = empty_col).value = message
+    sheet2.cell(row = 22, column = empty_col).value = message
     
     wb2.save('komunikat.xlsx') 
     

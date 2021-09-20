@@ -61,7 +61,7 @@ def main():
     empty_row = find_empty_row(sheet)
 
     #wstaw ścieżkę do zdjęcia
-    im = Image.open("cropped_images/SD.JPG")
+    im = Image.open("cropped_images/SD.png")
     x,y = im.size
 
     px = im.convert("L")
@@ -84,11 +84,9 @@ def main():
     
     sheet2 = wb2['Arkusz1']
     
-    empty_col = find_empty_col(sheet2, 13)
+    empty_col = find_empty_col(sheet2, 25)
     
-    sheet2.cell(row = 13, column = empty_col).value = d_out
-    
-    sheet2.cell(row = 14, column = empty_col).value = pd_out
+    sheet2.cell(row = 25, column = empty_col).value = d_out
     
     wb2.save('komunikat.xlsx')
     

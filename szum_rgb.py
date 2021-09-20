@@ -89,7 +89,7 @@ def main():
     empty_row = find_empty_row(sheet)
     
     #wstaw ścieżkę do zdjęcia
-    im = Image.open("cropped_images/CD1.JPG")
+    im = Image.open("cropped_images/CD1.png")
     x,y = im.size
 
     square_side_px = math.floor(x * square_side_mm / x_mm)
@@ -165,19 +165,21 @@ def main():
 
     wb.save('output.xlsx')
     wb.close()
-    """
+    
     wb2 = load_workbook(filename = 'komunikat.xlsx')
     
     sheet2 = wb2['Arkusz1']
     
-    empty_col = find_empty_col(sheet2, ?)
+    empty_col = find_empty_col(sheet2, 26)
     
-    sheet2.cell(row = ?, column = empty_col).value = ?
+    #zapis odchyleń standardowych do arkusza komunikat
     
-    sheet2.cell(row = ? + 1, column = empty_col).value = ?
+    for n in range(d_list):
+    
+        sheet2.cell(row = 26 + n, column = empty_col).value = d_list[n]
     
     wb2.save('komunikat.xlsx')
-    """
+    
     print("Szum RGB: Zakonczono")
     
 if __name__ == "__main__":

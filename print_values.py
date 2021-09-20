@@ -14,12 +14,12 @@ def find_max_index(t: tuple) -> int:
 
 def main():
 
-    label = "BW_RT1"
+    label = "pom0.png"
     
-    im = Image.open('cropped_images/' + label + '.JPG').convert("RGB")
+    im = Image.open(label).convert("RGB")
     x, y = im.size
     
-    print(im.getpixel((x/2,y/2)))
+    print(im.getpixel((77, 37)))
     
    
 

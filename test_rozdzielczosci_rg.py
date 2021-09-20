@@ -7,7 +7,7 @@ from openpyxl import load_workbook
 import glob
 
 def openFolder(path):
-    for filename in glob.glob(path + '/*.JPG'):
+    for filename in glob.glob(path + '/*.png'):
         img=Image.open(filename)
 
     return img
@@ -73,7 +73,7 @@ def main():
     #przeliczenie 20mm (bok testu rozdzielczosci) na piksele
     px_20mm = math.floor(y_all * MAX/h)
 
-    pict = Image.open('cropped_images/RG_RT.JPG')
+    pict = Image.open('cropped_images/RG_RT.png')
 
     im2 = pict.convert("RGB")
 
@@ -182,9 +182,13 @@ def main():
     
     sheet2 = wb2['Arkusz1']
     
-    empty_col = find_empty_col(sheet2, 5)
+    empty_col = find_empty_col(sheet2, 13)
     
-    sheet2.cell(row = 5, column = empty_col).value = real_h_px_resolution * real_v_px_resolution
+    sheet2.cell(row = 13, column = empty_col).value = real_h_px_resolution * real_v_px_resolution
+    
+    sheet2.cell(row = 14, column = empty_col).value = real_h_px_resolution 
+    
+    sheet2.cell(row = 15, column = empty_col).value = real_v_px_resolution
     
     wb2.save('komunikat.xlsx') 
     

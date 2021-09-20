@@ -241,9 +241,7 @@ def find_crop_point(img: Image.Image) -> list:
         print(index, value)
     """     
 
-def main():
-    
-    im = openFolder("photo")
+def main(im: Image.Image):
 
     #okreslenie o ile wycinek ma byc dalej wyciety od rogu zdjecia planszy
     x, y = im.size

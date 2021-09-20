@@ -71,7 +71,7 @@ def main():
     #przeliczenie 20mm (bok testu rozdzielczosci) na piksele
     px_20mm = math.floor(y_all * MAX/h)
 
-    pict = Image.open('cropped_images/RB_RT.JPG')
+    pict = Image.open('cropped_images/RB_RT.png')
 
     im2 = pict.convert("RGB")
 
@@ -180,9 +180,14 @@ def main():
     
     sheet2 = wb2['Arkusz1']
     
-    empty_col = find_empty_col(sheet2, 7)
+    empty_col = find_empty_col(sheet2, 19)
     
-    sheet2.cell(row = 7, column = empty_col).value = real_h_px_resolution * real_v_px_resolution
+    sheet2.cell(row = 19, column = empty_col).value = real_h_px_resolution * real_v_px_resolution
+    
+    sheet2.cell(row = 20, column = empty_col).value = real_h_px_resolution
+    
+    sheet2.cell(row = 21, column = empty_col).value = real_v_px_resolution
+    
     
     wb2.save('komunikat.xlsx') 
     

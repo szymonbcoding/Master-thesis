@@ -38,7 +38,7 @@ def recognition(n: int) -> float:
 
     #mode = "OCR1"
 
-    img = cv2.imread("cropped_images/OCR" + str(n) + ".JPG")
+    img = cv2.imread("cropped_images/OCR" + str(n) + ".png")
 
     # Adding custom options
     custom_config = r'--oem 3 --psm 6'
@@ -111,9 +111,9 @@ def main():
     
     sheet2 = wb2['Arkusz1']
     
-    empty_col = find_empty_col(sheet2, 12)
+    empty_col = find_empty_col(sheet2, 24)
     
-    sheet2.cell(row = 12, column = empty_col).value = out
+    sheet2.cell(row = 24, column = empty_col).value = out
     
     wb2.save('komunikat.xlsx')
     print("OCR przetworzone")
