@@ -1,8 +1,7 @@
-from PIL import Image
 import PIL
 from openpyxl import load_workbook
 import math
-
+from PIL import Image
 #import kontrola_kadrowania
 
 import glob
@@ -24,10 +23,10 @@ h = 366.67
 x_crop_difference = 30
 y_crop_difference = 51.5
 
-def main():
+def main(im: Image.Image):
     #if(kontrola_kadrowania.main()):
         
-    im = openFolder("cropped_photo")
+    #im = Image.open("cropped_photo/pokadrowaniu.png")
     x, y = im.size
 
     if(0.63 < y/x < 0.705):
@@ -60,13 +59,14 @@ def main():
                 if(j==5):
                     crop_list.append(crop_supp)
 
+    print("Wycinanie rozpoczete")
     for m in range(0, len(crop_list)):
         save_list.append(im.crop((math.floor(crop_list[m][0]*x/w), math.floor(crop_list[m][1]*y/h), math.floor(crop_list[m][2]*x/w), math.floor(crop_list[m][3]*y/h))))
         save_list[m].save('cropped_images/' + labels[m] + '.png')
     print("Wycinanie zakonczone")
     
 if __name__ == "__main__":
-    main()
+    main(im)
 
 
     

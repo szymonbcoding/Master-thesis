@@ -62,7 +62,7 @@ def main():
 
     #wstaw ścieżkę do zdjęcia
     im = Image.open("cropped_images/SD.png")
-    x,y = im.size
+    # x,y = im.size
 
     px = im.convert("L")
 

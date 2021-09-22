@@ -55,10 +55,8 @@ def vertexes_cropped_images(px: Image.Image, mfw: float, mfh: float, x: int, y: 
 
     for i in range(4):
         p = px.crop((crop_coords[i][0], crop_coords[i][1], crop_coords[i][2], crop_coords[i][3]))
-        p.save("crop_pom/pom" + str(i) + ".png")
         cropped_images.append(p)
-        
-        
+        p.save("crop_pom/pom" + str(i) + ".png")
         
     return cropped_images
 
@@ -185,7 +183,7 @@ def find_crop_point(img: Image.Image) -> list:
         #find min
         if(fs == 1):
         
-            if(value < min):
+            if(value < min and value != 0):
                 min = value
                 p_min = index
                 
@@ -204,21 +202,18 @@ def find_crop_point(img: Image.Image) -> list:
         print("MAX2 - value:", max2, "index:", p_max2)
 
         first = -1
-        last = -1
-
-        first_flag = True
+        last = 0
 
         for i in range(x):
             k = im.getpixel((i, p_min))
             
             if(is_red(k)):
-                if(first_flag):
                     first = i
-                    first_flag = False
-                elif(first + min - 2 < i and not first_flag):
-                    last = i
+                    last = first + min
                     
-        if(not(first == -1 or last == -1)):
+                
+                    
+        if(not(first == -1)):
             cpy = p_min
             cpx = first + math.floor((last - first)/2)
             
@@ -243,27 +238,48 @@ def find_crop_point(img: Image.Image) -> list:
 
 def main(im: Image.Image):
 
-    #okreslenie o ile wycinek ma byc dalej wyciety od rogu zdjecia planszy
-    x, y = im.size
+    if(im):
+        #okreslenie o ile wycinek ma byc dalej wyciety od rogu zdjecia planszy
+        x, y = im.size
 
-    mfw = 300
-    mfh = 300
-    
-    #przygotowanie wycinkow rogow kadrow
-    cropped_images = []
-    cropped_images = vertexes_cropped_images(im, mfw, mfh, x, y)
-    
-    coords_list = []
-    
-    #znalezienie gdzie jest punkt wyciecia na kazdym obszarze do kontroli kadrowania planszy
-    for i in range(4):
-        coords_list.append(find_crop_point(cropped_images[i]))
-    
-    #ustalenie ktore z punktow wyciecia definiuje jak najwiekszy wycinek i na jego podstawie przygtowanie wpolrzednych do kadrowania
-    im.crop(choose_crop_coordinates(coords_list, x, y, mfw, mfh)).save("cropped_photo/pokadrowaniu.png")
-
+        mfw = 240
+        mfh = 240
+        
+        #przygotowanie wycinkow rogow kadrow
+        cropped_images = []
+        cropped_images = vertexes_cropped_images(im, mfw, mfh, x, y)
+        
+        coords_list = []
+        
+        #znalezienie gdzie jest punkt wyciecia na kazdym obszarze do kontroli kadrowania planszy
+        for i in range(4):
+            pom = find_crop_point(cropped_images[i])
+            if(not(pom[0] == -1 or pom[0] == -2)):
+                coords_list.append(pom)
+            else:
+                return 0
+        
+        #ustalenie ktore z punktow wyciecia definiuje jak najwiekszy wycinek i na jego podstawie przygtowanie wpolrzednych do kadrowania
+        ccc = choose_crop_coordinates(coords_list, x, y, mfw, mfh)
+        
+        if(not (ccc == (-1, -1, -1, -1))):
+            imout = im.crop(ccc)
+            
+            imout.save("cropped_photo/pokadrowaniu.png")
+            
+            print("Kadrowanie zakonczone")
+            
+            return imout
+        else:
+            print("Niepoprawne kadrowanie")
+            return 0
+            
+    else:
+        print("Kadruj - blad: nie wprowadzono poprawnie zdjecia")
+        return 0
+        
 if __name__ == "__main__":
-    main()
+    main(im)
 
         
         

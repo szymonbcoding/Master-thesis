@@ -6,7 +6,7 @@ from openpyxl import load_workbook
 import glob
 
 def openFolder(path):
-    for filename in glob.glob(path + '/*.JPG'):
+    for filename in glob.glob(path + '/*.png'):
         img=Image.open(filename)
 
     return img
@@ -57,7 +57,7 @@ def main():
     h = 366.67
 
     #zaladowanie całego obrazu planszy
-    im1 = openFolder("photo")
+    im1 = openFolder("cropped_photo")
 
     x_all, y_all = im1.size
 
@@ -88,7 +88,8 @@ def main():
     hor_res = 0
     v_pointer = -1
 
-    for i in range(math.floor(1.5 * px_20mm)):
+    #for i in range(math.floor(1.5 * px_20mm)):
+    for i in range(math.floor(y / 2)):
         #resetowanie zmiennych
         hor_edges = 0
         hor_flag = False

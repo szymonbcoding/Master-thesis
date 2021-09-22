@@ -48,23 +48,8 @@ def quick_dist(xm: int, xl: int, xr: int, n: int) -> tuple:
     #tolerancja
     t = 0.05 * xm
     
-    #wycinek 0 lub 3
-    if(not (n % 3)):
-        #beczkowa
-        if(xl > xr + t):
-            d -= 1
-        #poduszkowa
-        elif(xl < xr - t):
-            d += 1
-    
-    #wycinek 1 lub 2
-    elif(n % 3):
-        #poduszkowa
-        if(xl > xr + t):
-            d += 1
-        #beczkowa
-        elif(xl < xr - t):
-            d -= 1
+    if(abs(xl - xr) > t):
+        d -= 1
     
     roznica = abs(xl - xr)/xm * 100
     
@@ -144,6 +129,7 @@ def processing(n: int):
                 white_passed = True
             elif(px > back_value and white_passed):
                 v_pointer = l
+                #obliczanie zagiecia
                 if(v_factor == -1):
                     x_left.append(v_pointer)
                 elif(v_factor == 1):
@@ -289,7 +275,7 @@ def main():
             
             message = ""
             
-            do = processing(i)[4]
+            do = processing(i)[3]
             do_sum += do
             
             if(do == 0):
@@ -309,9 +295,9 @@ def main():
                 #błąd
                 message = "Błąd"
             
-            sheet.cell(row = empty_row, column = (4 * i + 3)).value = message
+            sheet.cell(row = empty_row, column = (4 * i + 4)).value = message
         else:
-            for j in range(1, 4):
+            for j in range(1, 5):
                 sheet.cell(row = empty_row, column = (4 * i + j)).value = "Blad"
                 
     wb.save('output.xlsx')

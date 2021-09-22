@@ -11,7 +11,7 @@ def takeThird(elem: tuple) -> float:
 
 
 def openFolder(path):
-    for filename in glob.glob(path + '/*.JPG'):
+    for filename in glob.glob(path + '/*.png'):
         img=Image.open(filename)
 
     return img
@@ -59,7 +59,7 @@ def rt(n: int):
     h = 366.67
 
     #zaladowanie całego obrazu planszy
-    im1 = openFolder("photo")
+    im1 = openFolder("cropped_photo")
 
     x_all, y_all = im1.size
 
@@ -97,14 +97,14 @@ def rt(n: int):
             elif(im2.getpixel((i,j)) < vb_0):
                 vb_0 = im2.getpixel((i,j))
     
-    for i in range(math.floor(1.5 * px_20mm)):
+    #for i in range(math.floor(1.5 * px_20mm)):
+    for i in range(math.floor(y / 2)):
         #resetowanie zmiennych
         hor_edges = 0
         hor_flag = False
 
         for j in range(x):
-                     
-
+              
             if(im2.getpixel((j,i)) > 100 and not hor_flag):
 
                 hor_flag = True
@@ -117,8 +117,6 @@ def rt(n: int):
                 if(h_pointer == -1 and v_pointer != -1):
                     h_pointer = j
 
-                
-                    
             #sprawdzanie czy program naliczyl 5 zbocz 
             if(hor_edges>=5):
                 
@@ -133,7 +131,6 @@ def rt(n: int):
     #print("hor_res: " + str(hor_res))
     #stosunek poprawnych wierszy (najlepszy mozliwy wynik = 1, najgorszy mozliwy wynik = 0)
     p_row_found = hor_res/px_20mm
-    
 
     #2 - (1.8 * 0) = 2 (najgorszy wynik)
     #2 - (1.8 * 1) = 0.2 (najlepszy wynik)
@@ -295,11 +292,11 @@ def main():
     
     #srednia
     
-    sheet2.cell(row = 4, column = empty_col).value = round(s_vh/5, 2)
+    sheet2.cell(row = 4, column = empty_col).value = round(s_vh/5, 0)
     
-    sheet2.cell(row = 5, column = empty_col).value = round(s_h/5, 2)
+    sheet2.cell(row = 5, column = empty_col).value = round(s_h/5, 0)
     
-    sheet2.cell(row = 6, column = empty_col).value = round(s_v/5, 2)
+    sheet2.cell(row = 6, column = empty_col).value = round(s_v/5, 0)
     
     #najlepszy wynik
     

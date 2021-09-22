@@ -77,6 +77,14 @@ def calc_percent_deviation(dev_list: list, avr_list: list) -> list:
 
     return perc_dev_list
 
+def ca(d: list) -> float:
+    s = 0
+    for i in d:
+        s += i
+    
+    return s/3
+        
+
 ############################################
 #def main(photo: PIL.Image.Image, mode: int) -> list:
 def main():
@@ -138,10 +146,12 @@ def main():
 
     for i in range(9):
         cropped_images.append(px.crop((crop_coords[i][0], crop_coords[i][1], crop_coords[i][2], crop_coords[i][3])))
-        #cropped_images[i].save('rgb/' + str(i) + '.JPG')
+        cropped_images[i].save('rgb/' + str(i) + '.png')
     
     #labels = ["red", "yellow", "dark green", "light blue", "dark blue", "pink", "purple", "salmon", "light green"]
 
+    kom_d = []
+    
     for i in range(9):
 
         #print(labels[i])
@@ -151,6 +161,8 @@ def main():
         d_list = calc_deviation(cropped_images[i], a_list)
         pd_list = calc_percent_deviation(d_list, a_list)
 
+        kom_d.append(ca(d_list))
+        
         #Avr loop
         for j in range(3):
             sheet.cell(row = empty_row, column = i*9 + 1 + j * 3).value = round(a_list[j], 2)
@@ -174,11 +186,12 @@ def main():
     
     #zapis odchyleń standardowych do arkusza komunikat
     
-    for n in range(d_list):
+    for n in range(len(kom_d)):
     
-        sheet2.cell(row = 26 + n, column = empty_col).value = d_list[n]
+        sheet2.cell(row = 26 + n, column = empty_col).value = round(kom_d[n], 2)
     
     wb2.save('komunikat.xlsx')
+    wb2.close()
     
     print("Szum RGB: Zakonczono")
     

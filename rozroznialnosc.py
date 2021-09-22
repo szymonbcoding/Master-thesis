@@ -111,7 +111,7 @@ def main():
 
     for i in range(10):
         cropped_images.append(px.crop((crop_coords[i][0], crop_coords[i][1], crop_coords[i][2], crop_coords[i][3])))
-        #cropped_images[i].save('bw/' + str(i) + '.JPG')
+        cropped_images[i].save('bw/' + str(i) + '.png')
    
     good = 4
     notbad = 1
@@ -179,6 +179,7 @@ def main():
     sheet2.cell(row = 36, column = empty_col).value = m_w
     
     wb2.save('komunikat.xlsx')
+    wb2.close()
     
     print("Rozroznialnosc przetworzona")
     
