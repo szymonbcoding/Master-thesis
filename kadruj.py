@@ -197,9 +197,9 @@ def find_crop_point(img: Image.Image) -> list:
                 p_max2 = index
             
     if(not (p_max1 == -1 or p_min == -1 or p_max2 == -1)):
-        print("MAX1 - value:", max1, "index:", p_max1)
-        print("MIN - value:", min, "index:", p_min)
-        print("MAX2 - value:", max2, "index:", p_max2)
+        # print("MAX1 - value:", max1, "index:", p_max1)
+        # print("MIN - value:", min, "index:", p_min)
+        # print("MAX2 - value:", max2, "index:", p_max2)
 
         first = -1
         last = 0
@@ -242,8 +242,16 @@ def main(im: Image.Image):
         #okreslenie o ile wycinek ma byc dalej wyciety od rogu zdjecia planszy
         x, y = im.size
 
-        mfw = 240
-        mfh = 240
+        if(0.6 <= y/x <= 0.706):
+        
+            mfw = 240
+            mfh = 240
+        elif(0.706 < y/x <= 0.8):
+            mfw = 350
+            mfh = 350
+        else:
+            print("Niepoprawne proporcje zdjęcia")
+            return 0 
         
         #przygotowanie wycinkow rogow kadrow
         cropped_images = []
