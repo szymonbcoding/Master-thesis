@@ -41,19 +41,31 @@ def calc_dev(dist_list, avr):
 def calc_perc_dev(dev, avr):
     return dev/avr * 100
 
-def quick_dist(xm: int, xl: int, xr: int, n: int) -> tuple:
+def quick_dist(xm: int, xl: int, xr: int, n: int, h: int) -> tuple:
     
     d = 0
     
     #tolerancja
-    t = 0.05 * xm
+    r = abs(xl - xr)/h * 100
+    #t = 0.05 * xm
     
-    if(abs(xl - xr) > t):
-        d -= 1
+    if(not (n%3)):
+        
+        td = 4
+        tm = 2
+        
+    elif(n%3):
+        td = 2
+        tm = 1
+        
+    print("D" + str(n) + ":", str(r))   
+    if(r > td):
+        d = -1
+        
+    elif(r > tm):
+        d = -2
     
-    roznica = abs(xl - xr)/xm * 100
-    
-    return (roznica, d)
+    return (r, d)
 
 def dystorsja(dist_list):
     
@@ -209,7 +221,7 @@ def processing(n: int):
         # d3 = dystorsja(v_dist_left)
         # d4 = dystorsja(v_dist_right)  
         
-        out = quick_dist(x_left[0], x_left[-1], x_right[-1], n)
+        out = quick_dist(x_left[0], x_left[-3], x_right[-3], n, y)
 
         #print(d1, d2, d3, d4)
         
@@ -281,16 +293,16 @@ def main():
             if(do == 0):
                 #brak dystorsji
                 message = "Brak dystorsji"
-            elif(do >= 1):
+            elif(do >= 2):
                 #dystorsja poduszkowa
                 message = "Dystorsja poduszkowa"
-            # elif(do == 1): 
-            #     message = "Przypuszczalna dystorsja poduszkowa"
-            elif(do <= -1):
+            elif(do == 1): 
+                message = "Umiarkowana dystorsja poduszkowa"
+            elif(do <= -2):
                 #dystorsja beczkowa
                 message = "Dystorsja beczkowa"
-            # elif(do == -1):
-            #     message = "Przypuszczalna dystorsja beczkowa"
+            elif(do == -1):
+                message = "Umiarkowana dystorsja beczkowa"
             else:
                 #błąd
                 message = "Błąd"
@@ -314,16 +326,16 @@ def main():
     if(0 <= do_sum <= 0):
         #brak dystorsji
         m = "Brak dystorsji"
-    elif(do_sum >= 2):
+    elif(do_sum >= 3):
         #dystorsja poduszkowa
         m = "Dystorsja poduszkowa"
-    elif(1 >= do_sum >= 1): 
-        m = "Przypuszczalna dystorsja poduszkowa"
-    elif(do_sum <= -2):
+    elif(2 >= do_sum >= 1): 
+        m = "Umiarkowana dystorsja poduszkowa"
+    elif(do_sum <= -3):
         #dystorsja beczkowa
         m = "Dystorsja beczkowa"
-    elif(-1 <= do_sum <= -1):
-        m = "Przypuszczalna dystorsja beczkowa"
+    elif(-2 <= do_sum <= -1):
+        m = "Umiarkowana dystorsja beczkowa"
     else:
         #błąd
         m = "Błąd"
