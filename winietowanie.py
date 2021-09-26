@@ -61,7 +61,7 @@ def main():
 
     print("Przetwarzanie: Winietowanie...")
     
-    wb = load_workbook(filename = 'output.xlsx')
+    wb = load_workbook(filename = 'dane_szczegolowe.xlsx')
     sheet = wb['3_Winietowanie']
     
     empty_row = find_empty_row(sheet)
@@ -100,7 +100,7 @@ def main():
         
     sheet.cell(row = empty_row, column = 3).value = message
     
-    wb.save('output.xlsx')
+    wb.save('dane_szczegolowe.xlsx')
     wb.close()
     
     #komunikat dla uzytkownika

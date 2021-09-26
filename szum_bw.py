@@ -55,7 +55,7 @@ def calc_percent_deviation(dev: float, avr: float) -> float:
 #def main(photo: PIL.Image.Image, mode: int) -> list:
 def main():
     
-    wb = load_workbook(filename = 'output.xlsx')
+    wb = load_workbook(filename = 'dane_szczegolowe.xlsx')
     sheet = wb['6_Szum_BW']
     
     empty_row = find_empty_row(sheet)
@@ -77,7 +77,7 @@ def main():
     sheet.cell(row = empty_row, column = 2).value = d_out
     sheet.cell(row = empty_row, column = 3).value = pd_out
     
-    wb.save('output.xlsx')
+    wb.save('dane_szczegolowe.xlsx')
     wb.close()
     
     wb2 = load_workbook(filename = 'komunikat.xlsx')

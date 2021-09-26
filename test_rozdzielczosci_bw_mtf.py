@@ -46,7 +46,7 @@ def mtf(cf: float, c0: float) -> float:
 
 def rt(n: int):
     
-    wb = load_workbook(filename = 'output.xlsx')
+    wb = load_workbook(filename = 'dane_szczegolowe.xlsx')
     
     sheet = wb['2a_BW_RT' + str(n)]
     print("Przetwarzanie: BW_RT", str(n) + "...")
@@ -260,7 +260,7 @@ def rt(n: int):
     else:
         sheet.cell(row = empty_row, column = 8).value = "Blad"
     
-    wb.save('output.xlsx')  
+    wb.save('dane_szczegolowe.xlsx')  
     wb.close()
     
     return (real_h_px_resolution, real_v_px_resolution, real_h_px_resolution * real_v_px_resolution)

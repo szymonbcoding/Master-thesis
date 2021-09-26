@@ -48,7 +48,7 @@ def main():
     
     print("RG_RT: Przetwarzanie...")
     
-    wb = load_workbook(filename = 'output.xlsx')
+    wb = load_workbook(filename = 'dane_szczegolowe.xlsx')
     sheet = wb['2b_RG_RT']
     
     empty_row = find_empty_row(sheet)
@@ -176,7 +176,7 @@ def main():
     #print("Najwyzsza mozliwa pionowa rozdzielczosc " + str(math.floor(h/0.2)))
     sheet.cell(row = empty_row, column = 6).value = math.floor(h/0.2)
 
-    wb.save('output.xlsx')
+    wb.save('dane_szczegolowe.xlsx')
     wb.close()
     
     wb2 = load_workbook(filename = 'komunikat.xlsx')

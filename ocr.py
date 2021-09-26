@@ -83,7 +83,7 @@ def main():
     
     print("Przetwaranie OCR...")
     
-    wb = load_workbook(filename = 'output.xlsx')
+    wb = load_workbook(filename = 'dane_szczegolowe.xlsx')
     sheet = wb['5_OCR']
     
     empty_row = find_empty_row(sheet)
@@ -104,7 +104,7 @@ def main():
 
     sheet.cell(row = empty_row, column = 1).value = out
     
-    wb.save('output.xlsx')
+    wb.save('dane_szczegolowe.xlsx')
     wb.close()
     
     wb2 = load_workbook(filename = 'komunikat.xlsx')

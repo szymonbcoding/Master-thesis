@@ -59,11 +59,22 @@ def quick_dist(xm: int, xl: int, xr: int, n: int, h: int) -> tuple:
         tm = 1
         
     print("D" + str(n) + ":", str(r))   
+    
+    #dystorsja beczkowa
     if(r > td):
-        d = -1
-        
-    elif(r > tm):
         d = -2
+    
+    #umiarkowana dystorsja beczkowa
+    elif(r > tm):
+        d = -1
+    
+    #dystorsja poduszkowa
+    elif(r < -td):
+        d = 2
+    
+    #umiarkowana dystorsja poduszkowa
+    elif(r < - tm):
+        d = 1
     
     return (r, d)
 
@@ -262,7 +273,7 @@ def processing(n: int):
         
 def main():
     
-    wb = load_workbook(filename = 'output.xlsx')
+    wb = load_workbook(filename = 'dane_szczegolowe.xlsx')
     sheet = wb['4_Dystorsje']
     
     empty_row = find_empty_row(sheet)
@@ -312,7 +323,7 @@ def main():
             for j in range(1, 5):
                 sheet.cell(row = empty_row, column = (4 * i + j)).value = "Blad"
                 
-    wb.save('output.xlsx')
+    wb.save('dane_szczegolowe.xlsx')
     wb.close()
     
     wb2 = load_workbook(filename = 'komunikat.xlsx')

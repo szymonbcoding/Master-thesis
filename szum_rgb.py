@@ -91,7 +91,7 @@ def main():
 
     print("Przetwarzanie: Szum RGB...")
     
-    wb = load_workbook(filename = 'output.xlsx')
+    wb = load_workbook(filename = 'dane_szczegolowe.xlsx')
     sheet = wb['7_Szum_RGB']
     
     empty_row = find_empty_row(sheet)
@@ -175,7 +175,7 @@ def main():
         for j in range(3):
             sheet.cell(row = empty_row, column = i*9 + 3 + j * 3).value = round(pd_list[j], 2)
 
-    wb.save('output.xlsx')
+    wb.save('dane_szczegolowe.xlsx')
     wb.close()
     
     wb2 = load_workbook(filename = 'komunikat.xlsx')

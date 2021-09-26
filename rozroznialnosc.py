@@ -56,7 +56,7 @@ def main():
 
     print("Przetwarzanie: Rozroznialnosc...")
     
-    wb = load_workbook(filename = 'output.xlsx')
+    wb = load_workbook(filename = 'dane_szczegolowe.xlsx')
     sheet = wb['8_Rozroznialnosc']
     
     empty_row = find_empty_row(sheet)
@@ -166,7 +166,7 @@ def main():
         m_w = "Niedostateczna rozróżnialność"
     sheet.cell(row = empty_row, column = 10).value = m_w
     
-    wb.save('output.xlsx')
+    wb.save('dane_szczegolowe.xlsx')
     wb.close()
     wb2 = load_workbook(filename = 'komunikat.xlsx')
     
