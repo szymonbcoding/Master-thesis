@@ -2,7 +2,7 @@ from openpyxl import load_workbook
 
 def main():
 
-    wb = load_workbook("output.xlsx")
+    wb = load_workbook("dane_szczegolowe.xlsx")
 
 
     for sheet in wb.worksheets:
@@ -11,7 +11,7 @@ def main():
                 
                 sheet.cell(row = i, column = j).value = None
                 
-    wb.save("output.xlsx")
+    wb.save("dane_szczegolowe.xlsx")
     wb.close()
     
     wb2 = load_workbook("komunikat.xlsx")   
