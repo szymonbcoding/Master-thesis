@@ -41,42 +41,70 @@ def calc_dev(dist_list, avr):
 def calc_perc_dev(dev, avr):
     return dev/avr * 100
 
-def quick_dist(xm: int, xl: int, xr: int, n: int, h: int) -> tuple:
+def quick_dist(xl: list, xr: list, n: int, h: int) -> tuple:
     
-    d = 0
+    #lewy skrajny
+    left_px = xl[-2]
+
+    #prawy skrajny 
+    right_px = xr[-2]
+
+    #srodkowy
+    middle_px = xl[0]
     
-    #tolerancja
-    r = abs(xl - xr)/h * 100
-    #t = 0.05 * xm
+    print("D" + str(n + 1))
+    print("left_px:", left_px)
+    print("middle_px:", middle_px)
+    print("right_px:", right_px)
+    print("h:", h)
+
+    diff_list = []
+
+    # lm_diff = abs(left_px[1] - middle_px[1])
+    # lr_diff = abs(left_px[1] - right_px[1])
+    # mr_diff = abs()
+    diff_list.append(abs(left_px[1] - middle_px[1])) # [0] - lm
+    diff_list.append(abs(left_px[1] - right_px[1])) # [1] - lr
+    diff_list.append(abs(middle_px[1] - right_px[1])) # [2] - mr
+
+    r = round(max(diff_list)/h * 100, 2)
+    print("roznica bezwzgledna:", max(diff_list))
+    print("roznica wzgledna [%]:", r)
+
+    # d = 0
     
-    if(not (n%3)):
+    # #tolerancja
+    # r = abs(xl - xr)/h * 100
+    # #t = 0.05 * xm
+    
+    # if(not (n%3)):
         
-        td = 4
-        tm = 2
+    #     td = 4
+    #     tm = 2
         
-    elif(n%3):
-        td = 2
-        tm = 1
+    # elif(n%3):
+    #     td = 2
+    #     tm = 1
         
-    print("D" + str(n) + ":", str(r))   
+    # #print("D" + str(n) + ":", str(r))   
     
-    #dystorsja beczkowa
-    if(r > td):
-        d = -2
+    # #dystorsja beczkowa
+    # if(r > td):
+    #     d = -2
     
-    #umiarkowana dystorsja beczkowa
-    elif(r > tm):
-        d = -1
+    # #umiarkowana dystorsja beczkowa
+    # elif(r > tm):
+    #     d = -1
     
-    #dystorsja poduszkowa
-    elif(r < -td):
-        d = 2
+    # #dystorsja poduszkowa
+    # elif(r < -td):
+    #     d = 2
     
-    #umiarkowana dystorsja poduszkowa
-    elif(r < - tm):
-        d = 1
+    # #umiarkowana dystorsja poduszkowa
+    # elif(r < - tm):
+    #     d = 1
     
-    return (r, d)
+    # return (r, d)
 
 def dystorsja(dist_list):
     
@@ -154,9 +182,9 @@ def processing(n: int):
                 v_pointer = l
                 #obliczanie zagiecia
                 if(v_factor == -1):
-                    x_left.append(v_pointer)
+                    x_left.append((h_line, v_pointer))
                 elif(v_factor == 1):
-                    x_right.append(v_pointer)
+                    x_right.append((h_line, v_pointer))
                 break
 
         #print("v_pointer:", v_pointer)
@@ -232,129 +260,125 @@ def processing(n: int):
         # d3 = dystorsja(v_dist_left)
         # d4 = dystorsja(v_dist_right)  
         
-        out = quick_dist(x_left[0], x_left[-3], x_right[-3], n, y)
+        # out = quick_dist(x_left[0], x_left[-3], x_right[-3], n, y)
+        out = quick_dist(x_left, x_right, n, y)
 
-        #print(d1, d2, d3, d4)
+#         #print(d1, d2, d3, d4)
         
-        h_list = h_dist_up + h_dist_down
-        v_list = v_dist_left + v_dist_right
+#         h_list = h_dist_up + h_dist_down
+#         v_list = v_dist_left + v_dist_right
         
-        ha = calc_avr(h_list)
-        hd = calc_dev(h_list, ha)
-        hpd = calc_perc_dev(hd, ha)
+#         ha = calc_avr(h_list)
+#         hd = calc_dev(h_list, ha)
+#         hpd = calc_perc_dev(hd, ha)
         
-        va = calc_avr(v_list)
-        vd = calc_dev(v_list, va)
-        vpd = calc_perc_dev(vd, va)
+#         va = calc_avr(v_list)
+#         vd = calc_dev(v_list, va)
+#         vpd = calc_perc_dev(vd, va)
         
-        # d = d1 + d2 + d3 + d4
+#         # d = d1 + d2 + d3 + d4
         
-        """
-        if(d1 == 0 and d2 == 0 and d3 == 0 and d4 == 0):
-            #brak dystorsji
-            message = "Brak dystorsji"
-        elif(d1 == 1 and d2 == 1 and d3 == 1 and d4 == 1):
-            #dystorsja poduszkowa
-            message = "Dystorsja poduszkowa"
-        elif(d1 == -1 and d2 == -1 and d3 == -1 and d4 == -1):
-            #dystorsja beczkowa
-            message = "Dystorsja beczkowa"
-        else:
-            #błąd
-            message = "Błąd"
-        """ 
-        #                  roznica dystorsja
-        output = [hpd, vpd, out[0], out[1]]
+#         """
+#         if(d1 == 0 and d2 == 0 and d3 == 0 and d4 == 0):
+#             #brak dystorsji
+#             message = "Brak dystorsji"
+#         elif(d1 == 1 and d2 == 1 and d3 == 1 and d4 == 1):
+#             #dystorsja poduszkowa
+#             message = "Dystorsja poduszkowa"
+#         elif(d1 == -1 and d2 == -1 and d3 == -1 and d4 == -1):
+#             #dystorsja beczkowa
+#             message = "Dystorsja beczkowa"
+#         else:
+#             #błąd
+#             message = "Błąd"
+#         """ 
+#         #                  roznica dystorsja
+#         output = [hpd, vpd, out[0], out[1]]
         
-    else:
-        output = [None, None, None, None]
+#     else:
+#         output = [None, None, None, None]
            
-    return output
+#     return output
         
 def main():
+    for i in range(6):
+        processing(i)
     
-    wb = load_workbook(filename = 'dane_szczegolowe.xlsx')
-    sheet = wb['4_Dystorsje']
+#     wb2 = load_workbook(filename = 'komunikat.xlsx')
     
-    empty_row = find_empty_row(sheet)
+#     sheet2 = wb2['Arkusz1']
     
-    do_sum = 0
-    pd = 0
-    n = 0
-    for i in range(0, 4):
-        print("Przetwarzanie: Dystorsje" + str(i + 1) + "...")
-        if(processing(i)[0]):
-            #hpd
-            h = round(processing(i)[0], 3)
-            sheet.cell(row = empty_row, column = (4 * i + 1)).value = h
-            #vpd
-            v = round(processing(i)[1], 3)
-            sheet.cell(row = empty_row, column = (4 * i + 2)).value = v
-            #zagięcie procentowe
-            z = round(processing(i)[2], 3)
-            sheet.cell(row = empty_row, column = (4 * i + 3)).value = z
+#     empty_col = find_empty_col(sheet2, 23)
+    
+#     do_sum = 0
+#     pd = 0
+#     n = 0
+#     for i in range(0, 4):
+#         print("Przetwarzanie: Dystorsje" + str(i + 1) + "...")
+#         if(processing(i)[0]):
+#             #hpd
+#             h = round(processing(i)[0], 3)
+#             r1 = 123 + i * 4 
+#             sheet2.cell(row = r1, column = empty_col).value = h
+#             #vpd
+#             v = round(processing(i)[1], 3)
+#             sheet2.cell(row = r1 + 1, column = empty_col).value = v
+#             #zagięcie procentowe
+#             z = round(processing(i)[2], 3)
+#             sheet2.cell(row = r1 + 2, column = empty_col).value = z
             
-            #werdykt
+#             #werdykt
             
-            message = ""
+#             message = ""
             
-            do = processing(i)[3]
-            do_sum += do
+#             do = processing(i)[3]
+#             do_sum += do
             
-            if(do == 0):
-                #brak dystorsji
-                message = "Brak dystorsji"
-            elif(do >= 2):
-                #dystorsja poduszkowa
-                message = "Dystorsja poduszkowa"
-            elif(do == 1): 
-                message = "Umiarkowana dystorsja poduszkowa"
-            elif(do <= -2):
-                #dystorsja beczkowa
-                message = "Dystorsja beczkowa"
-            elif(do == -1):
-                message = "Umiarkowana dystorsja beczkowa"
-            else:
-                #błąd
-                message = "Błąd"
+#         #     if(do == 0):
+#         #         #brak dystorsji
+#         #         message = "Brak dystorsji"
+#         #     elif(do >= 2):
+#         #         #dystorsja poduszkowa
+#         #         message = "Dystorsja poduszkowa"
+#         #     elif(do == 1): 
+#         #         message = "Umiarkowana dystorsja poduszkowa"
+#         #     elif(do <= -2):
+#         #         #dystorsja beczkowa
+#         #         message = "Dystorsja beczkowa"
+#         #     elif(do == -1):
+#         #         message = "Umiarkowana dystorsja beczkowa"
+#         #     else:
+#         #         #błąd
+#         #         message = "Błąd"
             
-            sheet.cell(row = empty_row, column = (4 * i + 4)).value = message
-        else:
-            for j in range(1, 5):
-                sheet.cell(row = empty_row, column = (4 * i + j)).value = "Blad"
-                
-    wb.save('dane_szczegolowe.xlsx')
-    wb.close()
+#         #     #sheet2.cell(row = empty_row, column = (4 * i + 4)).value = message
+#         # else:
+#         #     for j in range(1, 5):
+#         #         #sheet2.cell(row = empty_row, column = (4 * i + j)).value = "Blad"
     
-    wb2 = load_workbook(filename = 'komunikat.xlsx')
-    
-    sheet2 = wb2['Arkusz1']
-    
-    empty_col = find_empty_col(sheet2, 23)
-    
-    m = ""
+#     m = ""
      
-    if(0 <= do_sum <= 0):
-        #brak dystorsji
-        m = "Brak dystorsji"
-    elif(do_sum >= 3):
-        #dystorsja poduszkowa
-        m = "Dystorsja poduszkowa"
-    elif(2 >= do_sum >= 1): 
-        m = "Umiarkowana dystorsja poduszkowa"
-    elif(do_sum <= -3):
-        #dystorsja beczkowa
-        m = "Dystorsja beczkowa"
-    elif(-2 <= do_sum <= -1):
-        m = "Umiarkowana dystorsja beczkowa"
-    else:
-        #błąd
-        m = "Błąd"
+#     if(0 <= do_sum <= 0):
+#         #brak dystorsji
+#         m = "Brak dystorsji"
+#     elif(do_sum >= 3):
+#         #dystorsja poduszkowa
+#         m = "Dystorsja poduszkowa"
+#     elif(2 >= do_sum >= 1): 
+#         m = "Umiarkowana dystorsja poduszkowa"
+#     elif(do_sum <= -3):
+#         #dystorsja beczkowa
+#         m = "Dystorsja beczkowa"
+#     elif(-2 <= do_sum <= -1):
+#         m = "Umiarkowana dystorsja beczkowa"
+#     else:
+#         #błąd
+#         m = "Błąd"
     
-    sheet2.cell(row = 23, column = empty_col).value = m
+#     sheet2.cell(row = 23, column = empty_col).value = m
     
-    wb2.save('komunikat.xlsx') 
-    print("Dystorsje przetworzone")
+#     wb2.save('komunikat.xlsx') 
+#     print("Dystorsje przetworzone")
     
 if __name__ == "__main__":
     main()
