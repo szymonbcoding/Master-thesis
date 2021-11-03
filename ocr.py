@@ -58,13 +58,8 @@ def recognition(n: int) -> float:
             with open('OCR' + str(n) + '_temp.txt','r') as file: 
                 for line in file:
                     if(line[0].isnumeric()):
-                        #printlabel[i] + tekst)
-                        #print("line:", line)
                         value = label[i] + tekst
-                        #value = "6.5 Praca magisterska rnGC6mmmm"
-
                         if(value in line):
-                            #print(getFontSize(line) + " - ok")
                             if(i != len(label) - 1):
                                 i += 1
                         else:
