@@ -61,54 +61,56 @@ def main():
 
     print("Przetwarzanie: Winietowanie...")
     
-    wb = load_workbook(filename = 'dane_szczegolowe.xlsx')
-    sheet = wb['3_Winietowanie']
-    
-    empty_row = find_empty_row(sheet)
-    
-    image_list = []
-
-    for i in range(1, 6):
-    
-        image_list.append(Image.open("cropped_images/BW_RT" + str(i) + ".png").convert("L"))
-
-    sv = 0
-
-    for i in range(4):
-        sv += calc_avr(image_list[i])
-    
-    avr_vertexes = sv/4
-
-    avr_center = calc_avr(image_list[4])
-
-    print("Srednia wartosc piksela na wierzcholkach planszy:", avr_vertexes)
-    a_v = round(avr_vertexes, 1)
-    sheet.cell(row = empty_row, column = 1).value = a_v
-    
-    print("Srednia wartosc piksela na srodku planszy:", avr_center)
-    a_c = round(avr_center, 1)
-    sheet.cell(row = empty_row, column = 2).value = a_c
-    
-    if(not winiet(avr_vertexes, avr_center)):
-        message = "Brak winietowania"
-    elif(winiet(avr_vertexes, avr_center) == 1):
-        message = "Umiarkowe winietowanie"
-    elif(winiet(avr_vertexes, avr_center) == 2):
-        message = "Widoczne winietowanie"
-    else:
-        message = "Błąd"
-        
-    sheet.cell(row = empty_row, column = 3).value = message
-    
-    wb.save('dane_szczegolowe.xlsx')
-    wb.close()
-    
     #komunikat dla uzytkownika
     wb2 = load_workbook(filename = 'komunikat.xlsx')
     
     sheet2 = wb2['Arkusz1']
     
     empty_col = find_empty_col(sheet2, 22)
+    
+    r_image_list = []
+    c_image_list = []
+
+    for i in range(1, 5):
+    
+        c_image_list.append(Image.open("cropped_images/WINIET_C" + str(i) + ".png").convert("L"))
+        r_image_list.append(Image.open("cropped_images/WINIET_R" + str(i) + ".png").convert("L"))
+
+
+    sc = 0
+    sr = 0
+
+    #suma wartosci pikseli centrum kadru
+    for i in range(4):
+        sc += calc_avr(c_image_list[i])
+
+    #suma wartosci pikseli rogow kadru
+    for i in range(4):
+        sr += calc_avr(r_image_list[i])
+    
+    avr_vertices = sr/4
+
+    avr_center = sc/4
+
+    # print("Srednia wartosc piksela na wierzcholkach planszy:", avr_vertices)
+    a_v = round(avr_vertices, 1)
+    #sheet2.cell(row = empty_row, column = 1).value = a_v
+    
+    # print("Srednia wartosc piksela na srodku planszy:", avr_center)
+    a_c = round(avr_center, 1)
+    #sheet2.cell(row = empty_row, column = 2).value = a_c
+    
+    if(not winiet(avr_vertices, avr_center)):
+        message = "Brak winietowania"
+    elif(winiet(avr_vertices, avr_center) == 1):
+        message = "Umiarkowe winietowanie"
+    elif(winiet(avr_vertices, avr_center) == 2):
+        message = "Widoczne winietowanie"
+    else:
+        message = "Błąd"
+        
+    sheet2.cell(row = 120, column = empty_col).value = abs(a_c - a_v)
+
     
     #sheet2.cell(row = 9, column = empty_col).value = abs(a_c - a_v)
     
