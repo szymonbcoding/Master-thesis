@@ -46,7 +46,7 @@ def main(im: Image.Image):
     elif(mode == 34):
         sheet = wb['34']
 
-    for i in range(2,19):
+    for i in range(2,27):
         crop_supp = []
         for j in range(1,6):
             if(j==1):
