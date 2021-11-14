@@ -89,75 +89,12 @@ def main():
                # exifdata[0x0101], exifdata[0x9202][0]/exifdata[0x9202][1], 
                # exifdata[0x9201][0]/exifdata[0x9201][1], exifdata[0x8827], "-" ]
 
-               wb = load_workbook(filename = 'dane_szczegolowe.xlsx')
-
-               sheet = wb['1_Ustawienia_aparatu']
-
-               empty_row = 0
-
-               for i in range(4, 1000):
-                    if(not (sheet.cell(row = i, column = 1).value)):
-                         empty_row = i
-                         break
-                    
                #Model aparatu
                try:
                     model = exifdata[0x0110]
-                    sheet.cell(row = empty_row, column = 1).value =  model
+                    
                except:
                     model = "-"
-                    sheet.cell(row = empty_row, column = 1).value = model
-                    
-               #Dlugosc ogniskowa
-               try:
-                    sheet.cell(row = empty_row, column = 2).value = exifdata[0xA405] 
-               except:
-                    sheet.cell(row = empty_row, column = 2).value = "-"
-                    
-               #Długość obrazu
-               try:
-                    sheet.cell(row = empty_row, column = 3).value = exifdata[0x0100] 
-               except:
-                    sheet.cell(row = empty_row, column = 3).value = x
-                    
-               #Szerokość obrazu
-               try:
-                    sheet.cell(row = empty_row, column = 4).value = exifdata[0x0101] 
-               except:
-                    sheet.cell(row = empty_row, column = 4).value = y
-                    
-               #Przyslona
-               try:
-                    sheet.cell(row = empty_row, column = 5).value = exifdata[0x9202][0]/exifdata[0x9202][1] 
-               except:
-                    sheet.cell(row = empty_row, column = 5).value = "5.6"
-                    
-               #Czas naswietlania
-               try:
-                    sheet.cell(row = empty_row, column = 6).value = exifdata[0x9201][0]/exifdata[0x9201][1] 
-               except:
-                    sheet.cell(row = empty_row, column = 6).value = "1/100"
-                    
-               #ISO
-               try:
-                    sheet.cell(row = empty_row, column = 7).value = exifdata[0x8827] 
-               except:
-                    sheet.cell(row = empty_row, column = 7).value = "200"
-                    
-               #Model obiektywu
-               try:
-                    sheet.cell(row = empty_row, column = 8).value = exifdata[0xA434] 
-               except:
-                    sheet.cell(row = empty_row, column = 8).value = "-"
-                    
-               #Nazwa zdjecia
-               try:
-                    sheet.cell(row = empty_row, column = 12).value = cut(im_bef_crop.filename)
-               except:
-                    sheet.cell(row = empty_row, column = 12).value = "-"
-                              
-               wb.save('dane_szczegolowe.xlsx')
-               wb.close()
 
                wb2 = load_workbook(filename = 'komunikat.xlsx')
 
