@@ -52,7 +52,6 @@ def calc_percent_deviation(dev: float, avr: float) -> float:
     return dev/avr * 100
 
 ############################################
-#def main(photo: PIL.Image.Image, mode: int) -> list:
 def main():
     
     wb = load_workbook(filename = 'dane_szczegolowe.xlsx')
@@ -62,7 +61,6 @@ def main():
 
     #wstaw ścieżkę do zdjęcia
     im = Image.open("cropped_images/SD.png")
-    # x,y = im.size
 
     px = im.convert("L")
 
@@ -91,7 +89,6 @@ def main():
     wb2.save('komunikat.xlsx')
     
 if __name__ == "__main__":
-    #main(photo, mode)
     main()
 
     
