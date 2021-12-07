@@ -24,9 +24,7 @@ x_crop_difference = 30
 y_crop_difference = 51.5
 
 def main(im: Image.Image):
-    #if(kontrola_kadrowania.main()):
-        
-    #im = Image.open("cropped_photo/pokadrowaniu.png")
+
     x, y = im.size
 
     if(0.63 < y/x < 0.705):

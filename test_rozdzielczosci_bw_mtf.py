@@ -46,12 +46,13 @@ def mtf(cf: float, c0: float) -> float:
 
 def rt(n: int):
     
-    wb = load_workbook(filename = 'dane_szczegolowe.xlsx')
-    
-    sheet = wb['2a_BW_RT' + str(n)]
     print("Przetwarzanie: BW_RT", str(n) + "...")
+
+    wb2 = load_workbook(filename = 'komunikat.xlsx')
     
-    empty_row = find_empty_row(sheet)
+    sheet2 = wb2['Arkusz1']
+    
+    empty_col = find_empty_col(sheet2, 4)
     
     #maksymalna wysokosc testu rozdzielczosci[mm]
     MAX = 20
@@ -96,8 +97,7 @@ def rt(n: int):
                 vw_0 = im2.getpixel((i,j))
             elif(im2.getpixel((i,j)) < vb_0):
                 vb_0 = im2.getpixel((i,j))
-    
-    #for i in range(math.floor(1.5 * px_20mm)):
+
     for i in range(math.floor(y / 2)):
         #resetowanie zmiennych
         hor_edges = 0
@@ -128,23 +128,27 @@ def rt(n: int):
                 h_mtf_pointer = i
                 break
 
-    #print("hor_res: " + str(hor_res))
     #stosunek poprawnych wierszy (najlepszy mozliwy wynik = 1, najgorszy mozliwy wynik = 0)
     p_row_found = hor_res/px_20mm
 
-    #2 - (1.8 * 0) = 2 (najgorszy wynik)
-    #2 - (1.8 * 1) = 0.2 (najlepszy wynik)
     h_mm_resolution = 2 - (1.8 * p_row_found)
-    #print("h_mm_resolution:", h_mm_resolution)
-    sheet.cell(row = empty_row, column = 1).value = round(h_mm_resolution, 3)
+    r1 = 31 + n * 11
+    sheet2.cell(row = r1, column = empty_col).value = round(h_mm_resolution, 3)
     
     real_h_px_resolution = math.floor(w/h_mm_resolution)
 
-    #print("Rzeczywista pozioma rozdzielczosc: " + str(real_h_px_resolution))
-    sheet.cell(row = empty_row, column = 2).value = real_h_px_resolution
-    
-    #print("Maksymalna mozliwa pozioma rozdzielczosc " + str(math.floor(w/0.2)))
-    sheet.cell(row = empty_row, column = 3).value = math.floor(w/0.2)
+    sheet2.cell(row = r1 + 1, column = empty_col).value = real_h_px_resolution
+
+    # w34
+    if(w < 500):
+        wmax = 1975
+    # w32
+    elif(w > 500):
+        wmax = 1755
+    else:
+        wmax = "Blad"
+
+    sheet2.cell(row = r1 + 2, column = empty_col).value = wmax
     
     #MTF
     
@@ -156,31 +160,21 @@ def rt(n: int):
     length_last_row_px = 10 * h_mm_resolution * x_all / w
     
     if(h_pointer + length_last_row_px < x):
-        #print("h_pointer (i):", h_pointer)
-        #print("h_mtf_pointer (j):", h_mtf_pointer)
-        #print("length_last_row_px:", length_last_row_px)
         if(not h_mtf_pointer == -1):
-            #print("length_last_row_px:", length_last_row_px)
-            #print("h_pointer:", h_pointer, "h_mtf_pointer:", h_mtf_pointer)
             for i in range(h_pointer, math.floor(h_pointer + length_last_row_px)):
-                #print(im2.getpixel((i, h_mtf_pointer)))
-                #print(im2.getpixel((i, v_pointer - px_20mm)))
-                #print(im2.getpixel((i, h_mtf_pointer)))
                 if(im2.getpixel((i, h_mtf_pointer)) > h_vw_f):
                     h_vw_f = im2.getpixel((i, h_mtf_pointer))
                 elif(im2.getpixel((i, h_mtf_pointer)) < h_vb_f):
                     h_vb_f = im2.getpixel((i, h_mtf_pointer))
 
             h_mtf_result = mtf(contrast(h_vw_f, h_vb_f), contrast(vw_0, vb_0))
-            #print("vw_0:", vw_0, "vb_0:", vb_0, "h_vw_f:", h_vw_f, "h_vb_f:", h_vb_f)
-            #print("h_mtf_result:", h_mtf_result)
             
-            sheet.cell(row = empty_row, column = 4).value = round(h_mtf_result, 2)
+            sheet2.cell(row = r1 + 3, column = empty_col).value = round(h_mtf_result, 2)
         
         else:
-            sheet.cell(row = empty_row, column = 4).value = "Blad"
+            sheet2.cell(row = r1 + 3, column = empty_col).value = "Blad"
     else:
-        sheet.cell(row = empty_row, column = 4).value = "Blad"
+        sheet2.cell(row = r1 + 3, column = empty_col).value = "Blad"
     #PETLA TESTU ROZDZIELCZOSCI PIONOWEJ
 
     ver_res = 0
@@ -218,21 +212,16 @@ def rt(n: int):
                 h_pointer = i
                 break
 
-    #print("ver_res: " + str(ver_res))
-    #stosunek poprawnych kolumn (najlepszy wynik = 1, najgorszy wynik = 0)
     p_col_found = ver_res/px_20mm
 
-    #2 - (1.8 * 0) = 2 (najgorszy wynik)
-    #2 - (1.8 * 1) = 0.2 (najlepszy wynik)
     v_mm_resolution = 2 - (1.8 * p_col_found)
-    sheet.cell(row = empty_row, column = 5).value = round(v_mm_resolution, 3)
+    sheet2.cell(row = r1 + 5, column = empty_col).value = round(v_mm_resolution, 3)
     
     real_v_px_resolution = math.floor(h/v_mm_resolution)
-    sheet.cell(row = empty_row, column = 6).value = real_v_px_resolution
+    sheet2.cell(row = r1 + 6, column = empty_col).value = real_v_px_resolution
     
-    #print("Rzeczywista pionowa rozdzielczosc: " + str(real_v_px_resolution))
-    #print("Najwyzsza mozliwa pionowa rozdzielczosc " + str(math.floor(h/0.2)))
-    sheet.cell(row = empty_row, column = 7).value = math.floor(h/0.2)
+    # h max
+    sheet2.cell(row = r1 + 7, column = empty_col).value = 1316
     #MTF
     
     #sprawdzenie o ile spadł kontrast w ostatnim wierszu gdzie rozróżnił
@@ -241,37 +230,40 @@ def rt(n: int):
     v_vb_f = 256
 
     length_last_col_px = 10 * v_mm_resolution * y_all / h
-    #print("length_last_col_px:", length_last_col_px)
     if(v_pointer + 0.8 *length_last_row_px < y):
         if(not h_pointer == -1):
             for j in range(math.floor(v_mtf_pointer - 0.8 * length_last_col_px), v_mtf_pointer):
-                #print(im2.getpixel((h_pointer, j)))
                 if(im2.getpixel((h_pointer, j)) > v_vw_f):
                     v_vw_f = im2.getpixel((h_pointer, j))
                 elif(im2.getpixel((h_pointer, j)) < v_vb_f):
                     v_vb_f = im2.getpixel((h_pointer, j))
 
             v_mtf_result = mtf(contrast(v_vw_f, v_vb_f), contrast(vw_0, vb_0))
-            #print("vw_0:", vw_0, "vb_0:", vb_0, "v_vw_f:", v_vw_f, "v_vb_f:", v_vb_f)
-            #print("v_mtf_result:", v_mtf_result)
-            sheet.cell(row = empty_row, column = 8).value = round(v_mtf_result, 2)
+
+            sheet2.cell(row = r1 + 8, column = empty_col).value = round(v_mtf_result, 2)
         else:
-            sheet.cell(row = empty_row, column = 8).value = "Blad"
+            sheet2.cell(row = r1 + 8, column = empty_col).value = "Blad"
     else:
-        sheet.cell(row = empty_row, column = 8).value = "Blad"
+        sheet2.cell(row = r1 + 8, column = empty_col).value = "Blad"
     
-    wb.save('dane_szczegolowe.xlsx')  
-    wb.close()
+    wb2.save('komunikat.xlsx') 
+    print("BW_RT przetworzone")
     
     return (real_h_px_resolution, real_v_px_resolution, real_h_px_resolution * real_v_px_resolution)
     
     
-def main():
-    
+def main(): 
+
     bw_real_res_list = []
     
     for n in range(1,6):
         bw_real_res_list.append(rt(n))
+
+    wb2 = load_workbook(filename = 'komunikat.xlsx')
+    
+    sheet2 = wb2['Arkusz1']
+    
+    empty_col = find_empty_col(sheet2, 4)
         
     bw_real_res_list.sort(key = takeThird)
     
@@ -283,12 +275,6 @@ def main():
         s_h += n[0]
         s_v += n[1]
         s_vh += n[2]
-    
-    wb2 = load_workbook(filename = 'komunikat.xlsx')
-    
-    sheet2 = wb2['Arkusz1']
-    
-    empty_col = find_empty_col(sheet2, 4)
     
     #srednia
     

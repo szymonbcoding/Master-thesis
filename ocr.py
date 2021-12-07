@@ -36,13 +36,10 @@ def recognition(n: int) -> float:
     OCR1_nr_list = ["6.5", "6", "5.5", "5", "4.5", "4", "3.5", "3"]
     OCR2_nr_list = ["2.7", "2.4", "2.1", "1.8", "1.5", "1.2", "1", "0.8", "0.6"]
 
-    #mode = "OCR1"
-
     img = cv2.imread("cropped_images/OCR" + str(n) + ".png")
 
     # Adding custom options
     custom_config = r'--oem 3 --psm 6'
-    #print(pytesseract.image_to_string(img, config=custom_config))
 
     f = open("OCR" + str(n) +"_temp.txt", "w")
     
@@ -59,6 +56,7 @@ def recognition(n: int) -> float:
                 for line in file:
                     if(line[0].isnumeric()):
                         value = label[i] + tekst
+
                         if(value in line):
                             if(i != len(label) - 1):
                                 i += 1
@@ -78,10 +76,11 @@ def main():
     
     print("Przetwaranie OCR...")
     
-    wb = load_workbook(filename = 'dane_szczegolowe.xlsx')
-    sheet = wb['5_OCR']
+    wb2 = load_workbook(filename = 'komunikat.xlsx')
     
-    empty_row = find_empty_row(sheet)
+    sheet2 = wb2['Arkusz1']
+    
+    empty_col = find_empty_col(sheet2, 24)
     
     min = 10
     
@@ -96,17 +95,6 @@ def main():
         out = "Blad modulu OCR"
     else:
         out = min
-
-    sheet.cell(row = empty_row, column = 1).value = out
-    
-    wb.save('dane_szczegolowe.xlsx')
-    wb.close()
-    
-    wb2 = load_workbook(filename = 'komunikat.xlsx')
-    
-    sheet2 = wb2['Arkusz1']
-    
-    empty_col = find_empty_col(sheet2, 24)
     
     sheet2.cell(row = 24, column = empty_col).value = out
     

@@ -34,7 +34,6 @@ def red_diff(value: tuple) -> bool:
 
 def is_red(value: tuple) -> bool:
     if((value[0]>=130 and value[1]< 130 and value[2] < 130 and red_diff(value) and find_max_index(value) == 0) or is_dark_red(value)):
-    #if((value[0]>=130 and value[1]<= 130 and value[2] <= 130 and find_max_index(value) == 0)):
         return True
     else:
         return False
@@ -61,8 +60,6 @@ def vertexes_cropped_images(px: Image.Image, mfw: float, mfh: float, x: int, y: 
     return cropped_images
 
 def choose_crop_coordinates(lt: list, x: int, y: int, mfw: int, mfh: int) -> tuple:
-    #input 
-    #list: left-top, right-top, left-down, right-down
     
     lt1 = lt
     
@@ -73,22 +70,7 @@ def choose_crop_coordinates(lt: list, x: int, y: int, mfw: int, mfh: int) -> tup
             
             lt1[i][0] = xf * (x - mfw) + lt1[i][0]
             lt1[i][1] = yf * (y - mfh) + lt1[i][1]
-    
-    # for i in range(4):
-        
-    #     for j in range(2):
-    #         print(lt[i][j], end = ' ')
-    #     print()
-    
-    """
-    Rownoznaczny kod, ale mniej czytelny
-    for i in range(4):
-        for j in range(2):
-            f = (i%2, math.floor(i/2))
-            
-            lt[i][j] = ((j + 1) % 2) * f[0] * (x - mfw) + (j % 2) * f[1] * (y - mfh) + lt[i][j]
-    
-    """
+
     #left
     min_hor = 10000
     for i in range(4):
@@ -112,8 +94,6 @@ def choose_crop_coordinates(lt: list, x: int, y: int, mfw: int, mfh: int) -> tup
     for i in range(4):
         if(lt1[i][1] > max_vert):
             max_vert = lt1[i][1]
-    
-    # print("min_hor:", min_hor, "min_vert:", min_vert, "max_hor:", max_hor, "max_vert:", max_vert)
             
     if(not(min_vert == 10000 or min_hor == 10000 or max_vert == -1 or max_hor == -1 )):
         
@@ -131,18 +111,6 @@ def find_crop_point(img: Image.Image) -> list:
     x, y = im.size
     
     row_points = []
-    """
-    print("srodek:", im.getpixel((4, 5)))
-
-    print("czerwony:", im.getpixel((30, 35)))
-
-
-    #print("krawedz:", im.getpixel((65, 58)))
-
-    #print("uśrednione tło:", im.getpixel((70, 43)))
-
-    print("tło:", im.getpixel((63, 65)))
-    """
 
     max1 = 0
     p_max1 = -1
@@ -197,9 +165,6 @@ def find_crop_point(img: Image.Image) -> list:
                 p_max2 = index
             
     if(not (p_max1 == -1 or p_min == -1 or p_max2 == -1)):
-        # print("MAX1 - value:", max1, "index:", p_max1)
-        # print("MIN - value:", min, "index:", p_min)
-        # print("MAX2 - value:", max2, "index:", p_max2)
 
         first = -1
         last = 0
@@ -218,8 +183,6 @@ def find_crop_point(img: Image.Image) -> list:
             cpx = first + math.floor((last - first)/2)
             
             cp = [cpx, cpy]
-            # print("Punkt wyciecia:")
-            # print(cp)
             
             return cp
 
@@ -228,13 +191,7 @@ def find_crop_point(img: Image.Image) -> list:
             return [-1, -1]
     else:
         print("Blad indeksow do znalezienia minimum czerwonego")
-        return [-2, -2]
-    
-    
-    """
-    for index, value in enumerate(row_points):
-        print(index, value)
-    """     
+        return [-2, -2]  
 
 def main(im: Image.Image):
 

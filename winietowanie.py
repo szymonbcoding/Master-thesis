@@ -92,13 +92,9 @@ def main():
 
     avr_center = sc/4
 
-    # print("Srednia wartosc piksela na wierzcholkach planszy:", avr_vertices)
     a_v = round(avr_vertices, 1)
-    #sheet2.cell(row = empty_row, column = 1).value = a_v
-    
-    # print("Srednia wartosc piksela na srodku planszy:", avr_center)
+
     a_c = round(avr_center, 1)
-    #sheet2.cell(row = empty_row, column = 2).value = a_c
     
     if(not winiet(avr_vertices, avr_center)):
         message = "Brak winietowania"
@@ -109,10 +105,7 @@ def main():
     else:
         message = "Błąd"
         
-    sheet2.cell(row = 120, column = empty_col).value = abs(a_c - a_v)
-
-    
-    #sheet2.cell(row = 9, column = empty_col).value = abs(a_c - a_v)
+    sheet2.cell(row = 120, column = empty_col).value = a_c - a_v
     
     sheet2.cell(row = 22, column = empty_col).value = message
     
