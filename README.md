@@ -11,11 +11,17 @@ The main script is "program.py". It loads photo saved in folder "photo", runs su
 Test parameters:
 
 1a - Real resolution of image (black-white, red-green, green-blue, red-blue)
+
 1b - Vignetting
+
 2 - Distortion (barrel, pincushion)
+
 3 - OCR (Optical Characters Recognition)
+
 4a - Black-white noise
+
 4b - Color noise
+
 5 - Color distinguishability
 
 
