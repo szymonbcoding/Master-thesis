@@ -6,7 +6,7 @@ Link to master thesis (if you know polish language): https://drive.google.com/fi
 
 The main script is "program.py". It loads photo saved in folder "photo", runs subprograms to analize characteristic areas and saves results of processing to spreasheet "komunikat.xlsx".
 
-![alt text](https://drive.google.com/file/d/1tbUkq-NVNS9iup3Of3R5rLY9-9NRc6L4/view?usp=sharing)
+![This is image.](https://github.com/szymonbcoding/Master-thesis/blob/main/plansza_real_photo_obszary.JPG)
 
 Test parameters:
 
