@@ -24,6 +24,11 @@ Test parameters:
 
 5 - Color distinguishability
 
+To run app, run execute command:
+```
+cd src && python program.py
+```
+
 
 
 
