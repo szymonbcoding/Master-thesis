@@ -62,7 +62,7 @@ def main():
     print("Przetwarzanie: Winietowanie...")
     
     #komunikat dla uzytkownika
-    wb2 = load_workbook(filename = 'komunikat.xlsx')
+    wb2 = load_workbook(filename = '../data/komunikat.xlsx')
     
     sheet2 = wb2['Arkusz1']
     
@@ -73,8 +73,8 @@ def main():
 
     for i in range(1, 5):
     
-        c_image_list.append(Image.open("cropped_images/WINIET_C" + str(i) + ".png").convert("L"))
-        r_image_list.append(Image.open("cropped_images/WINIET_R" + str(i) + ".png").convert("L"))
+        c_image_list.append(Image.open("../data/cropped_images/WINIET_C" + str(i) + ".png").convert("L"))
+        r_image_list.append(Image.open("../data/cropped_images/WINIET_R" + str(i) + ".png").convert("L"))
 
 
     sc = 0
@@ -109,7 +109,7 @@ def main():
     
     sheet2.cell(row = 22, column = empty_col).value = message
     
-    wb2.save('komunikat.xlsx') 
+    wb2.save('../data/komunikat.xlsx') 
     
     print("Winietowanie: Zakonczono")
     

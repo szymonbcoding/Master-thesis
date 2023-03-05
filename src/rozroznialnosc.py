@@ -51,18 +51,17 @@ def calc_avr(photo: PIL.Image.Image) -> float:
     return (s/n)
 
 ############################################
-#def main(photo: PIL.Image.Image, mode: int) -> list:
 def main():
 
     print("Przetwarzanie: Rozroznialnosc...")
     
-    wb = load_workbook(filename = 'dane_szczegolowe.xlsx')
+    wb = load_workbook(filename = '../data/dane_szczegolowe.xlsx')
     sheet = wb['8_Rozroznialnosc']
     
     empty_row = find_empty_row(sheet)
     
     #wstaw ścieżkę do zdjęcia
-    im = Image.open("cropped_images/CD2.png")
+    im = Image.open("../data/cropped_images/CD2.png")
     x,y = im.size
 
     square_side_px = math.floor(x * square_side_mm / x_mm)
@@ -111,7 +110,7 @@ def main():
 
     for i in range(10):
         cropped_images.append(px.crop((crop_coords[i][0], crop_coords[i][1], crop_coords[i][2], crop_coords[i][3])))
-        cropped_images[i].save('bw/' + str(i) + '.png')
+        cropped_images[i].save('../data/bw/' + str(i) + '.png')
    
     good = 4
     notbad = 1
@@ -166,9 +165,9 @@ def main():
         m_w = "Niedostateczna rozróżnialność"
     sheet.cell(row = empty_row, column = 10).value = m_w
     
-    wb.save('dane_szczegolowe.xlsx')
+    wb.save('../data/dane_szczegolowe.xlsx')
     wb.close()
-    wb2 = load_workbook(filename = 'komunikat.xlsx')
+    wb2 = load_workbook(filename = '../data/komunikat.xlsx')
     
     sheet2 = wb2['Arkusz1']
     
@@ -178,7 +177,7 @@ def main():
     
     sheet2.cell(row = 36, column = empty_col).value = m_w
     
-    wb2.save('komunikat.xlsx')
+    wb2.save('../data/komunikat.xlsx')
     wb2.close()
     
     print("Rozroznialnosc przetworzona")

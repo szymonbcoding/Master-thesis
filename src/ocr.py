@@ -36,12 +36,12 @@ def recognition(n: int) -> float:
     OCR1_nr_list = ["6.5", "6", "5.5", "5", "4.5", "4", "3.5", "3"]
     OCR2_nr_list = ["2.7", "2.4", "2.1", "1.8", "1.5", "1.2", "1", "0.8", "0.6"]
 
-    img = cv2.imread("cropped_images/OCR" + str(n) + ".png")
+    img = cv2.imread("../data/cropped_images/OCR" + str(n) + ".png")
 
     # Adding custom options
     custom_config = r'--oem 3 --psm 6'
 
-    f = open("OCR" + str(n) +"_temp.txt", "w")
+    f = open("../data/OCR" + str(n) +"_temp.txt", "w")
     
     try:
         if(pytesseract.image_to_string(img, config=custom_config)):
@@ -52,7 +52,7 @@ def recognition(n: int) -> float:
             i=0
             label = eval("OCR" + str(n) + "_nr_list")
 
-            with open('OCR' + str(n) + '_temp.txt','r') as file: 
+            with open('../data/OCR' + str(n) + '_temp.txt','r') as file: 
                 for line in file:
                     if(line[0].isnumeric()):
                         value = label[i] + tekst
@@ -76,7 +76,7 @@ def main():
     
     print("Przetwaranie OCR...")
     
-    wb2 = load_workbook(filename = 'komunikat.xlsx')
+    wb2 = load_workbook(filename = '../data/komunikat.xlsx')
     
     sheet2 = wb2['Arkusz1']
     
@@ -98,7 +98,7 @@ def main():
     
     sheet2.cell(row = 24, column = empty_col).value = out
     
-    wb2.save('komunikat.xlsx')
+    wb2.save('../data/komunikat.xlsx')
     print("OCR przetworzone")
     
     

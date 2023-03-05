@@ -2,7 +2,7 @@ from openpyxl import load_workbook
 
 def main():
     
-    wb2 = load_workbook("komunikat.xlsx")   
+    wb2 = load_workbook("../data/komunikat.xlsx")   
     
     sheet2 = wb2['Arkusz1']   
     
@@ -11,7 +11,7 @@ def main():
                 
             sheet2.cell(row = i, column = j).value = None
     
-    wb2.save("komunikat.xlsx")
+    wb2.save("../data/komunikat.xlsx")
     wb2.close()
     
 if __name__ == "__main__":

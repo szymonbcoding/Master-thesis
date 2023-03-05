@@ -36,7 +36,7 @@ def main(im: Image.Image):
     else:
         print("Nieobslugiwana proporcja obrazu.")
 
-    wb = load_workbook(filename = 'koordynaty.xlsx')
+    wb = load_workbook(filename = '../data/koordynaty.xlsx')
 
     #otworz odpowiedni arkusz
     if(mode == 23):
@@ -60,7 +60,7 @@ def main(im: Image.Image):
     print("Wycinanie rozpoczete")
     for m in range(0, len(crop_list)):
         save_list.append(im.crop((math.floor(crop_list[m][0]*x/w), math.floor(crop_list[m][1]*y/h), math.floor(crop_list[m][2]*x/w), math.floor(crop_list[m][3]*y/h))))
-        save_list[m].save('cropped_images/' + labels[m] + '.png')
+        save_list[m].save('../data/cropped_images/' + labels[m] + '.png')
     print("Wycinanie zakonczone")
     
 if __name__ == "__main__":

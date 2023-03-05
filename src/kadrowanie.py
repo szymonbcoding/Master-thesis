@@ -55,7 +55,7 @@ def vertexes_cropped_images(px: Image.Image, mfw: float, mfh: float, x: int, y: 
     for i in range(4):
         p = px.crop((crop_coords[i][0], crop_coords[i][1], crop_coords[i][2], crop_coords[i][3]))
         cropped_images.append(p)
-        p.save("crop_pom/pom" + str(i) + ".png")
+        p.save("../data/crop_pom/pom" + str(i) + ".png")
         
     return cropped_images
 
@@ -230,7 +230,7 @@ def main(im: Image.Image):
         if(not (ccc == (-1, -1, -1, -1))):
             imout = im.crop(ccc)
             
-            imout.save("cropped_photo/pokadrowaniu.png")
+            imout.save("../data/cropped_photo/pokadrowaniu.png")
             
             print("Kadrowanie zakonczone")
             

@@ -99,7 +99,7 @@ def processing(n: int):
     x_left = []
     x_right = []
 
-    im = Image.open('cropped_images/D' + str(n + 1) + '.png')
+    im = Image.open('../data/cropped_images/D' + str(n + 1) + '.png')
     mono = ImageOps.grayscale(im)
     x, y = mono.size
 
@@ -212,7 +212,7 @@ def processing(n: int):
 def main():
     
     
-    wb2 = load_workbook(filename = 'komunikat.xlsx')
+    wb2 = load_workbook(filename = '../data/komunikat.xlsx')
     
     sheet2 = wb2['Arkusz1']
     
@@ -261,7 +261,7 @@ def main():
     
     sheet2.cell(row = 23, column = empty_col).value = m
     
-    wb2.save('komunikat.xlsx') 
+    wb2.save('../data/komunikat.xlsx') 
     print("Dystorsje przetworzone")
     
 if __name__ == "__main__":

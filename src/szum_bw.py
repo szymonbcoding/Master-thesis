@@ -54,13 +54,13 @@ def calc_percent_deviation(dev: float, avr: float) -> float:
 ############################################
 def main():
     
-    wb = load_workbook(filename = 'dane_szczegolowe.xlsx')
+    wb = load_workbook(filename = '../data/dane_szczegolowe.xlsx')
     sheet = wb['6_Szum_BW']
     
     empty_row = find_empty_row(sheet)
 
     #wstaw ścieżkę do zdjęcia
-    im = Image.open("cropped_images/SD.png")
+    im = Image.open("../data/cropped_images/SD.png")
 
     px = im.convert("L")
 
@@ -75,10 +75,10 @@ def main():
     sheet.cell(row = empty_row, column = 2).value = d_out
     sheet.cell(row = empty_row, column = 3).value = pd_out
     
-    wb.save('dane_szczegolowe.xlsx')
+    wb.save('../data/dane_szczegolowe.xlsx')
     wb.close()
     
-    wb2 = load_workbook(filename = 'komunikat.xlsx')
+    wb2 = load_workbook(filename = '../data/komunikat.xlsx')
     
     sheet2 = wb2['Arkusz1']
     
@@ -86,7 +86,7 @@ def main():
     
     sheet2.cell(row = 25, column = empty_col).value = d_out
     
-    wb2.save('komunikat.xlsx')
+    wb2.save('../data/komunikat.xlsx')
     
 if __name__ == "__main__":
     main()

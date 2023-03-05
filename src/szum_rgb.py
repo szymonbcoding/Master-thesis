@@ -91,13 +91,13 @@ def main():
 
     print("Przetwarzanie: Szum RGB...")
     
-    wb = load_workbook(filename = 'dane_szczegolowe.xlsx')
+    wb = load_workbook(filename = '../data/dane_szczegolowe.xlsx')
     sheet = wb['7_Szum_RGB']
     
     empty_row = find_empty_row(sheet)
     
     #wstaw ścieżkę do zdjęcia
-    im = Image.open("cropped_images/CD1.png")
+    im = Image.open("../data/cropped_images/CD1.png")
     x,y = im.size
 
     square_side_px = math.floor(x * square_side_mm / x_mm)
@@ -146,16 +146,11 @@ def main():
 
     for i in range(9):
         cropped_images.append(px.crop((crop_coords[i][0], crop_coords[i][1], crop_coords[i][2], crop_coords[i][3])))
-        cropped_images[i].save('rgb/' + str(i) + '.png')
-    
-    #labels = ["red", "yellow", "dark green", "light blue", "dark blue", "pink", "purple", "salmon", "light green"]
+        cropped_images[i].save('../data/rgb/' + str(i) + '.png')
 
     kom_d = []
     
     for i in range(9):
-
-        #print(labels[i])
-        #print("")
 
         a_list = calc_avr(cropped_images[i])
         d_list = calc_deviation(cropped_images[i], a_list)
@@ -175,10 +170,10 @@ def main():
         for j in range(3):
             sheet.cell(row = empty_row, column = i*9 + 3 + j * 3).value = round(pd_list[j], 2)
 
-    wb.save('dane_szczegolowe.xlsx')
+    wb.save('../data/dane_szczegolowe.xlsx')
     wb.close()
     
-    wb2 = load_workbook(filename = 'komunikat.xlsx')
+    wb2 = load_workbook(filename = '../data/komunikat.xlsx')
     
     sheet2 = wb2['Arkusz1']
     
@@ -190,7 +185,7 @@ def main():
     
         sheet2.cell(row = 26 + n, column = empty_col).value = round(kom_d[n], 2)
     
-    wb2.save('komunikat.xlsx')
+    wb2.save('../data/komunikat.xlsx')
     wb2.close()
     
     print("Szum RGB: Zakonczono")

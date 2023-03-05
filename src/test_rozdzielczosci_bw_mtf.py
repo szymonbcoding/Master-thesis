@@ -48,7 +48,7 @@ def rt(n: int):
     
     print("Przetwarzanie: BW_RT", str(n) + "...")
 
-    wb2 = load_workbook(filename = 'komunikat.xlsx')
+    wb2 = load_workbook(filename = '../data/komunikat.xlsx')
     
     sheet2 = wb2['Arkusz1']
     
@@ -60,7 +60,7 @@ def rt(n: int):
     h = 366.67
 
     #zaladowanie całego obrazu planszy
-    im1 = openFolder("cropped_photo")
+    im1 = openFolder("../data/cropped_photo")
 
     x_all, y_all = im1.size
 
@@ -75,7 +75,7 @@ def rt(n: int):
     px_20mm = math.ceil(y_all * MAX/h)
 
     #zaladowanie obrazu w wersji monochromatycznej
-    im2 = Image.open('cropped_images/BW_RT' + str(n) + '.png').convert("L")
+    im2 = Image.open('../data/cropped_images/BW_RT' + str(n) + '.png').convert("L")
 
     #rozdzielczosc wycinka
     x, y = im2.size
@@ -246,7 +246,7 @@ def rt(n: int):
     else:
         sheet2.cell(row = r1 + 8, column = empty_col).value = "Blad"
     
-    wb2.save('komunikat.xlsx') 
+    wb2.save('../data/komunikat.xlsx') 
     print("BW_RT przetworzone")
     
     return (real_h_px_resolution, real_v_px_resolution, real_h_px_resolution * real_v_px_resolution)
@@ -259,7 +259,7 @@ def main():
     for n in range(1,6):
         bw_real_res_list.append(rt(n))
 
-    wb2 = load_workbook(filename = 'komunikat.xlsx')
+    wb2 = load_workbook(filename = '../data/komunikat.xlsx')
     
     sheet2 = wb2['Arkusz1']
     
@@ -300,7 +300,7 @@ def main():
     
     sheet2.cell(row = 12, column = empty_col).value = bw_real_res_list[0][1]
     
-    wb2.save('komunikat.xlsx') 
+    wb2.save('../data/komunikat.xlsx') 
     print("BW_RT przetworzone")
     
   

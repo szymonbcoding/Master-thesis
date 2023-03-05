@@ -63,7 +63,7 @@ def main():
     #https://www.thepythoncode.com/article/extracting-image-metadata-in-python
     
     im_list = []
-    im_list = openFolderMI("photo")
+    im_list = openFolderMI("../data/photo")
     
     for count, im_bef_crop in enumerate(im_list, start = 1):
           
@@ -78,7 +78,7 @@ def main():
           
                wycinanie.main(out)
                
-               image = openFolder("cropped_photo")
+               image = openFolder("../data/cropped_photo")
                
                x, y = image.size
                     
@@ -96,7 +96,7 @@ def main():
                except:
                     model = "-"
 
-               wb2 = load_workbook(filename = 'komunikat.xlsx')
+               wb2 = load_workbook(filename = '../data/komunikat.xlsx')
 
                sheet2 = wb2['Arkusz1']
 
@@ -116,7 +116,7 @@ def main():
                #rozdzielczosc deklarowana przez producenta po przycieciu
                sheet2.cell(row = 3, column = empty_col).value = x * y
 
-               wb2.save('komunikat.xlsx')
+               wb2.save('../data/komunikat.xlsx')
                wb2.close()
                
                test_rozdzielczosci_bw_mtf.main()
