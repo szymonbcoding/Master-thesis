@@ -1,4 +1,4 @@
-openpyxl
-Pillow
-cv2
-pytesseract
+openpyxl==3.0.5
+Pillow==7.1.2
+cv2==3.4.2
+pytesseract==0.3.7
